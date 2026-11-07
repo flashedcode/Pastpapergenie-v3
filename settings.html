@@ -1,61 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Settings</title>
+    <title>Settings - pastpapergenie v3</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="monetag" content="cd3f6daab1950d56cc8284e65a83b1ba">
-    <script>(function(){try{if(window.self!==window.top)return;}catch(e){return;}var s=document.createElement('script');s.dataset.zone='11810591';s.src='https://nap5k.com/tag.min.js';(document.documentElement||document.body).appendChild(s);})();</script>
     <link rel="stylesheet" href="styles.css" />
-        <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
-      <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-Q919W0VJ1S');
-      </script>
-    <style>
-      #games { display: flex; justify-content: center; }
-      #games main { text-align: center; width: 100%; max-width: 900px; margin: 0 auto; }
-      #games main > div { display: inline-block; text-align: center; }
-      .setting-section { display: block; width: 100%; max-width: 600px; margin: 1.5rem auto; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 12px; }
-      .setting-section h2 { margin-top: 0; }
-      .setting-section p.desc { font-size: 0.95em; opacity: 0.9; }
-      #cloak-preview { display: flex; align-items: center; gap: 8px; justify-content: center; background: #1e1e1e; color: #fff; border-radius: 8px 8px 0 0; padding: 8px 12px; max-width: 320px; margin: 1rem auto 0; font-size: 0.9em; }
-      #cloak-preview img { width: 16px; height: 16px; }
-      .setting-row { margin: 0.6rem 0; }
-      .setting-row input[type="text"] { font-size: 1em; padding: 0.4em; border-radius: 8px; border: none; }
-      #panic-key { width: 3em; text-align: center; }
-      #panic-url { width: 90%; max-width: 380px; }
-      #settings-status { min-height: 1.5em; color: #00f2ff; }
-    </style>
-  </head>
+    <script src="theme.js"></script>
+</head>
   <body>
-    <script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
-    <nav>
-      <button type="button" class="nav-btn nav-home-btn"  onclick="location.href='start.html'">
-        <img src="favicon.ico" width="40px" height="40px" alt="Home">
-      </button>
-      <button type="button" class="nav-btn" onclick="window.location.href='select.html'">
-        <img src="media/nav-buttons/game.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" onclick="location.href='search.html'">
-        <img src="media/nav-buttons/search.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" onclick="location.href='tools.html'">
-        <img src="media/nav-buttons/tools.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" aria-current="page" onclick="location.href='settings.html'">
-        <img src="media/nav-buttons/settings.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" onclick="location.href='disclaimer.html'">
-        <img src="media/nav-buttons/disclaimer.svg" width="40px" height="40px">
-      </button>
-    </nav>
+<div id="page">
+<header>
+<p class="logo"><a href="start.html">pastpapergenie <small>v3</small></a></p>
+<p class="blurb">Browser games and web search. follow @xrompf on tiktok</p>
+</header>
+<nav>
+<a href="start.html">Home</a>
+<a href="select.html">Games</a>
+<a href="anime.html">Anime</a>
+<a href="search.html">Search</a>
+<a href="tools.html">Tools</a>
+<a href="settings.html" class="start" aria-current="page">Settings</a>
+</nav>
+
     <div id="games">
-      <main>
-        <h1>Settings:</h1>
+      <main class="bare">
         <div class="setting-section">
           <h2>Tab Cloak</h2>
           <p class="desc">Disguises the tab title and icon on every page. Default keeps each page real title.</p>
@@ -87,17 +55,13 @@
           </div>
         </div>
         <div class="setting-section">
-          <h2>Theme</h2>
-<p class="desc">Classic is the default look. Dark pushes it to black, Light flips it for bright rooms, Primordial is a black-and-white throwback.</p>
-
-      <select id="themePick" style="font-size:1em;padding:0.5em;">
-<option value="classic">Classic</option>
-<option value="dark">Dark</option>
-<option value="light">Light</option>
-<option value="fall">Fall</option>
-<option value="primordial">Primordial</option>
-            </select>
-          </div>
+          <h2>Look</h2>
+          <p class="row"><label for="p-theme">Theme</label><select id="p-theme" data-pref="theme"><option value="aero">Aero (default)</option><option value="pink">Aero Pink</option><option value="luna">Luna, XP blue</option><option value="classic">Classic green</option><option value="night">Night</option></select></p>
+          <p class="row"><label for="p-font">Font</label><select id="p-font" data-pref="font"><option value="tahoma">Tahoma</option><option value="verdana">Verdana</option><option value="georgia">Georgia</option><option value="system">Your system font</option></select></p>
+          <p class="row"><label for="p-size">Text size</label><select id="p-size" data-pref="size"><option value="s">Small</option><option value="m">Normal</option><option value="l">Large</option></select></p>
+          <p class="row"><label for="p-width">Page width</label><select id="p-width" data-pref="width"><option value="n">Narrow</option><option value="m">Normal</option><option value="w">Wide</option></select></p>
+          <p class="row"><label for="p-corners">Corners</label><select id="p-corners" data-pref="corners"><option value="rd">Rounded</option><option value="sq">Square</option></select></p>
+        </div>
         <div class="setting-section">
           <h2>History</h2>
           <p class="desc">Recently played row on home keeps your last 4 games. <span id="recent-count"></span></p>
@@ -188,38 +152,31 @@
               localStorage.removeItem('tabCloaker');
               localStorage.removeItem('dotgui_recent');
               localStorage.removeItem('dotgui_favs');
-              localStorage.removeItem('dotgui_theme');
+              localStorage.removeItem('ppg_prefs');
               localStorage.setItem('dotgui_panic_key', PANIC_DEFAULTS.key);
               localStorage.setItem('dotgui_panic_url', PANIC_DEFAULTS.url);
               localStorage.setItem('dotgui_panic_redirect', 'true');
             } catch (e) {}
             tabCloaker.value = 'default';
             setTabCloak('default');
-            themePick.value = 'fall';
-            applyTheme('fall');
+            fillLook(); ppgApply();
             panicKey.value = PANIC_DEFAULTS.key;
             panicUrl.value = PANIC_DEFAULTS.url;
             panicRedirect.checked = true;
             refreshRecentCount();
             flash('All settings reset.');
           });
-          var themePick = document.getElementById('themePick');
-          function applyTheme(v) {
-            try {
-              if (v === 'classic') { delete document.body.dataset.theme; }
-              else { document.body.dataset.theme = v; }
-            } catch (e) {}
-          }
-          var savedTheme = 'fall';
-          try { savedTheme = localStorage.getItem('dotgui_theme') || 'fall'; } catch (e) {}
-          themePick.value = savedTheme;
-          applyTheme(savedTheme);
-          themePick.addEventListener('change', function(e) {
-            var v = e.target.value;
-            try { localStorage.setItem('dotgui_theme', v); } catch (e) {}
-            applyTheme(v);
-            flash('Theme saved.');
+          var DEFS = { theme: 'aero', font: 'tahoma', size: 'm', width: 'm', corners: 'rd' };
+          function readPrefs() { try { return JSON.parse(localStorage.getItem('ppg_prefs')) || {}; } catch (e) { return {}; } }
+          function fillLook() { var p = readPrefs(); document.querySelectorAll('[data-pref]').forEach(function(el) { el.value = p[el.dataset.pref] || DEFS[el.dataset.pref]; }); }
+          document.querySelectorAll('[data-pref]').forEach(function(el) {
+            el.addEventListener('change', function() {
+              var p = readPrefs(); p[el.dataset.pref] = el.value;
+              try { localStorage.setItem('ppg_prefs', JSON.stringify(p)); } catch (e) {}
+              ppgApply(); flash('Look saved.');
+            });
           });
+          fillLook();
           var saved = localStorage.getItem('tabCloaker') || 'default';
           tabCloaker.value = saved;
           setTabCloak(saved);
@@ -246,5 +203,7 @@
         </script>
       </main>
     </div>
-  </body>
+  <footer><p>Licence problem or takedown request: contact details are being set up and will be here soon.</p></footer>
+</div>
+</body>
 </html>

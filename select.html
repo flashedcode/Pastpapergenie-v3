@@ -1,55 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Games</title>
+    <title>Games - pastpapergenie v3</title>
     <meta charset="UTF-8" />
+    <script>(function(s){s.dataset.zone='12204855',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="styles.css" />
-    <meta name="monetag" content="cd3f6daab1950d56cc8284e65a83b1ba">
-    <script>(function(){try{if(window.self!==window.top)return;}catch(e){return;}var s=document.createElement('script');s.dataset.zone='11810591';s.src='https://nap5k.com/tag.min.js';(document.documentElement||document.body).appendChild(s);})();</script>
-        <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
-      <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-Q919W0VJ1S');
-      </script>
-    <style>
-      .game-section-divider {
-        width: min(90%, 900px);
-        height: 2px;
-        margin: 1.5rem auto;
-        background: rgba(0, 242, 255, 0.45);
-        box-shadow: 0 0 10px rgba(0, 242, 255, 0.25);
-      }
-    </style>
-  </head>
+    <script src="theme.js"></script>
+</head>
   <body>
-    <script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
-    <nav>
-      <button type="button" class="nav-btn nav-home-btn"  onclick="location.href='start.html'">
-        <img src="favicon.ico" width="40px" height="40px" alt="Home">
-      </button>
-      <button type="button" class="nav-btn" aria-current="page" onclick="window.location.href='select.html'">
-        <img src="media/nav-buttons/game.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" onclick="location.href='search.html'">
-        <img src="media/nav-buttons/search.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" onclick="location.href='tools.html'">
-        <img src="media/nav-buttons/tools.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" onclick="location.href='settings.html'">
-        <img src="media/nav-buttons/settings.svg" width="40px" height="40px">
-      </button>
-      <button type="button" class="nav-btn" onclick="location.href='disclaimer.html'">
-        <img src="media/nav-buttons/disclaimer.svg" width="40px" height="40px">
-      </button>
-    </nav>
+<div id="page">
+<header>
+<p class="logo"><a href="start.html">pastpapergenie <small>v3</small></a></p>
+<p class="blurb">Browser games and web search. follow @xrompf on tiktok</p>
+</header>
+<nav>
+<a href="start.html">Home</a>
+<a href="select.html" class="start" aria-current="page">Games</a>
+<a href="anime.html">Anime</a>
+<a href="search.html">Search</a>
+<a href="tools.html">Tools</a>
+<a href="settings.html">Settings</a>
+</nav>
+
     <div id="games">
       <main>
-        <h1>Games:</h1>
+        <h1>Games</h1>
         <div class="search-bar-container">
           <input
             id="game-search"
@@ -60,10 +36,10 @@
             oninput="filterGames()"
           />
         </div>
-        <div id="no-results-message" style="display:none; text-align:center; font-family: Ubuntu, sans-serif; color: #099eda; font-size: 1.2em; margin-top: 30px; background: rgba(0,0,0,0.7); border-radius: 12px; padding: 18px 24px; box-shadow: 0 2px 16px #00ffff33;">
+        <div id="no-results-message" class="empty" style="display:none">
           No results found. Please use the game suggestion form below. 👇
         </div>
-        <button class="button" id="request" onclick="window.open('https://forms.gle/d8hBcyNGbLXk7cEk9', '_blank')">Game Request Form</button>
+        <button class="button" id="request" onclick="window.open('https://forms.cloud.microsoft/r/1DBL2MgJKn', '_blank')">Game Request Form</button>
         <br>
         <button class="button" id="random-game" onclick="randomGame()">
           <img src="media/random.png" alt="Random Game" style="width:130px;height:130px;">
@@ -181,7 +157,7 @@
           <button class="button" data-title="Deltarune (1-2)" onclick="window.location.href='pages/game-pages/deltarune.html'">
             <img loading="lazy" src="media/buttons/deltarune.webp" alt="Deltarune (1-2)" style="width:130px;height:130px;">
           </button>
-          <button class="button" data-title="Deltarune (Full)" onclick="alert('NEEDS DELTARUNE OWNERSHIP ON STEAM! Deltarune Full is coming soon. Issues with this? Report in the Server or Github Issues. No Deltarune? Play Ch 1+2 under Deltarune (1-2).')">
+          <button class="button" data-title="Deltarune (Full)" onclick="alert('NEEDS DELTARUNE OWNERSHIP ON STEAM! Deltarune Full is coming soon. Issues with this? Let me know. No Deltarune? Play Ch 1+2 under Deltarune (1-2).')">
             <img loading="lazy" src="media/buttons/vinetrap.jpg" alt="Deltarune (Full)" style="width:130px;height:130px;">
           </button>
           <button class="button" data-title="Unfair Undyne" onclick="window.location.href='pages/game-pages/unfairundyne.html'">
@@ -433,6 +409,8 @@
             if (go && url) window.location.href = url;
           });
         </script>
+<footer><p>Licence problem or takedown request: contact details are being set up and will be here soon.</p></footer>
+</div>
 </body>
   <script>
     // Tab cloaker

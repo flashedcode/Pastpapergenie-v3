@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Games</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="monetag" content="cd3f6daab1950d56cc8284e65a83b1ba">
+    <script>(function(){try{if(window.self!==window.top)return;}catch(e){return;}var s=document.createElement('script');s.dataset.zone='11810591';s.src='https://nap5k.com/tag.min.js';(document.documentElement||document.body).app
+        <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-Q919W0VJ1S');
+      </script>
+    <style>
+      .game-section-divider {
+        width: min(90%, 900px);
+        height: 2px;
+        margin: 1.5rem auto;
+        background: rgba(0, 242, 255, 0.45);
+        box-shadow: 0 0 10px rgba(0, 242, 255, 0.25);
+      }
+    </style>
+  </head>
+  <body>
+    <script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
+    <nav>
+      <button type="button" class="nav-btn nav-home-btn"  onclick="location.href='start.html'">
+        <img src="favicon.ico" width="40px" height="40px" alt="Home">
+      <button type="button" class="nav-btn" aria-current="page" onclick="window.location.href='select.html'">
+        <img src="media/nav-buttons/game.svg" width="40px" height="40px">
+      <button type="button" class="nav-btn" onclick="location.href='search.html'">
+        <img src="media/nav-buttons/search.svg" width="40px" height="40px">
+      <button type="button" class="nav-btn" onclick="location.href='tools.html'">
+        <img src="media/nav-buttons/tools.svg" width="40px" height="40px">
+      <button type="button" class="nav-btn" onclick="location.href='settings.html'">
+        <img src="media/nav-buttons/settings.svg" width="40px" height="40px">
+      <button type="button" class="nav-btn" onclick="location.href='disclaimer.html'">
+        <img src="media/nav-buttons/disclaimer.svg" width="40px" height="40px">
+    </nav>
+    <div id="games">
+      <main>
+        <h1>Games:</h1>
+        <div class="search-bar-container">
+          <input
+            id="game-search"
+            class="search-bar"
+            type="text"
+            placeholder="Look for a game you want..."
+            autocomplete="off"
+            oninput="filterGames()"
+          />
+        </div>
+        <div id="no-results-message" style="display:none; text-align:center; font-family: Ubuntu, sans-serif; color: #099eda; font-size: 1.2em; margin-top: 30px; background: rgba(0,0,0,0.7); border-radius: 12px; padding: 18px 2
+          No results found. Please use the game suggestion form below. 👇
+        </div>
+        <br>
+          <img src="media/random.png" alt="Random Game" style="width:130px;height:130px;">
+        <div id="games" style="margin-top:1rem;">
+          <div id="recent" style="display:none;">
+            <h2>Recently Played:</h2>
+            <div id="recent-buttons"></div>
+          </div>
+        </div>
+        <div class="game-section-divider" aria-hidden="true"></div>
+        <div id="game-buttons">
+        </div>
+      </main>
+    </div>
+  <script>
+          // dotgui-panic: global panic key, guards typing
+          document.addEventListener('keydown', function(e) {
+            var t = e.target;
+            if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+            var key = '';
+            try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
+            if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
+            try {
+              document.title = 'Google';
+              var f = document.querySelector("link[rel~='icon']");
+              if (f) f.href = 'https://www.google.com/favicon.ico';
+            } catch (err) {}
+            var go = true, url = 'https://classroom.google.com';
+            try {
+              go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
+              url = localStorage.getItem('dotgui_panic_url') || url;
+            } catch (err) {}
+            if (go && url) window.location.href = url;
+          });
+        </script>
+</body>
+  <script>
+    // Tab cloaker
+    (function() {
+      const value = localStorage.getItem('tabCloaker') || 'default';
+      const favicon = document.querySelector("link[rel~='icon']") || (() => {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+        return link;
+      })();
+      if (value === 'google') {
+        document.title = 'Google';
+        favicon.href = 'https://www.google.com/favicon.ico';
+      } else if (value === 'vocab') {
+        document.title = 'My Learning | Vocabulary.com';
+        favicon.href = 'https://www.vocabulary.com/favicon.ico';
+      } else if (value === 'canvas') {
+          document.title = 'Canvas';
+          favicon.href = 'https://canvas.instructure.com/favicon.ico';
+        } else if (value === 'drive') {
+          document.title = 'Google Drive';
+          favicon.href = 'https://drive.google.com/favicon.ico';
+        } else if (value === 'docs') {
+          document.title = 'Google Docs';
+          favicon.href = 'https://docs.google.com/favicon.ico';
+        } else {
+        favicon.href = 'favicon.ico';
+      }
+    })();
+
+    var DG_TITLES = {};
+    document.querySelectorAll('#game-buttons .button').forEach(function(b) {
+      DG_TITLES[b.getAttribute('data-title') || ''] = 1;
+    });
+    function dgLabel(b) {
+      var dt = b.getAttribute('data-title') || '';
+      var im = b.querySelector('img');
+      var al = im ? (im.getAttribute('alt') || '') : '';
+      if (al && al !== dt && !DG_TITLES[al]) return al;
+      return dt;
+    }
+    (function() {
+      var favs = [];
+      try { favs = JSON.parse(localStorage.getItem('dotgui_favs') || '[]'); } catch(e) { favs = []; }
+      if (!Array.isArray(favs)) favs = [];
+      function isFav(p) { return favs.indexOf(p) !== -1; }
+      function saveFavs() { try { localStorage.setItem('dotgui_favs', JSON.stringify(favs)); } catch(e) {} }
+      function pageOf(b) {
+        var oc = b.getAttribute('onclick') || '';
+        var m = oc.match(/pages\/game-pages\/[^']+/) || oc.match(/pages\/tool-pages\/[^']+/);
+        return m ? m[0] : '';
+      }
+      var gameButtons = document.getElementById('game-buttons');
+      Array.prototype.slice.call(gameButtons.querySelectorAll(':scope > .button')).forEach(function(b) {
+        var label = document.createElement('span');
+        label.className = 'tile-label';
+        label.textContent = dgLabel(b);
+        label.title = dgLabel(b);
+        b.appendChild(label);
+        var star = document.createElement('span');
+        star.className = 'fav-star' + (isFav(pageOf(b)) ? ' on' : '');
+        star.textContent = '★';
+        star.setAttribute('role', 'button');
+        star.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var p = pageOf(b);
+          if (!p) return;
+          var i = favs.indexOf(p);
+          if (i === -1) { favs.push(p); star.classList.add('on'); }
+          else { favs.splice(i, 1); star.classList.remove('on'); }
+          saveFavs();
+          sortTiles();
+        });
+        b.appendChild(star);
+      });
+      function alpha(a, b) {
+        return dgLabel(a).localeCompare(
+          dgLabel(b),
+          undefined,
+          { numeric: true, sensitivity: 'base' }
+        );
+      }
+      function sortTiles() {
+        Array.prototype.slice.call(gameButtons.querySelectorAll(':scope > .button'))
+          .sort(function(a, b) {
+            var fa = isFav(pageOf(a)) ? 0 : 1;
+            var fb = isFav(pageOf(b)) ? 0 : 1;
+            if (fa !== fb) return fa - fb;
+            return alpha(a, b);
+          })
+          .forEach(function(button) { gameButtons.appendChild(button); });
+      }
+      sortTiles();
+    })();
+
+    // Recently played - direct DOM read (no fetch), cap 4, hide if <2
+    (function() {
+        var recent = [];
+        try { recent = JSON.parse(localStorage.getItem('dotgui_recent') || '[]'); } catch(e) { recent = []; }
+        if (!Array.isArray(recent) || recent.length < 2) return;
+        recent = recent.slice(0,4);
+        var box = document.getElementById('recent');
+        var btns = document.getElementById('recent-buttons');
+        var map = {};
+        document.querySelectorAll('#game-buttons .button').forEach(function(b){
+            var oc = b.getAttribute('onclick') || '';
+            var m = oc.match(/pages\/game-pages\/[^']+/);
+            if (!m) return;
+            var img = b.querySelector('img');
+            map[m[0]] = { title: dgLabel(b) || m[0], img: img ? img.getAttribute('src') : null, alt: img ? (img.getAttribute('alt')||'') : '' };
+        });
+        btns.innerHTML=''; var shown=0;
+        recent.forEach(function(r){
+            var info = map[r.page]; if(!info || !info.img) return;
+            var im=document.createElement('img'); im.className='recent-thumb';
+            im.src=info.img; im.alt=info.title; im.title=info.title;
+            im.onclick=(function(p){ return function(){ window.location.href=p; }; })(r.page);
+            btns.appendChild(im); shown++;
+        });
+        if(shown>=2) box.style.display='';
+    })();
+    // Random game - picks from all games, same tab
+    function randomGame() {
+      const buttons = document.querySelectorAll('#game-buttons .button');
+      if (!buttons.length) return;
+      const pick = buttons[Math.floor(Math.random() * buttons.length)];
+      const oc = pick.getAttribute('onclick') || '';
+      const m = oc.match(/pages\/game-pages\/[^']+/);
+      if (m) window.location.href = m[0];
+    }
+
+    // Game button filter
+    function filterGames() {
+      const input = document.getElementById('game-search').value.toLowerCase();
+      const buttons = document.querySelectorAll('#game-buttons .button');
+      const isSearching = input.trim() !== '';
+      let anyVisible = false;
+      buttons.forEach(btn => {
+        const title = dgLabel(btn).toLowerCase();
+        if (title.includes(input)) {
+          btn.style.display = '';
+          anyVisible = true;
+        } else {
+          btn.style.display = 'none';
+        }
+      });
+      document.getElementById('no-results-message').style.display = anyVisible ? 'none' : 'block';
+      document.getElementById('random-game').style.display = isSearching ? 'none' : '';
+      document.getElementById('recent').style.display = isSearching ? 'none' : '';
+    }
+  </script>
+</html>
