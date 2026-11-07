@@ -1,32 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Movies & TV - pastpapergenie v3</title>
-<meta name="description" content="Stream movies and TV shows in HD using pastpapergenie v3's movie browser.">
-<link rel="stylesheet" href="styles.css" />
-<script src="theme.js"></script>
-<style>
-  #player-win .stage {
-    min-height: 480px;
-    height: 65vh;
-    max-height: 700px;
-  }
-  #player-win .stage iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-  #mgrid.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 10px;
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Movies & TV Shows - pastpapergenie v3</title>
+  <meta name="description" content="Stream movies and TV shows in HD with working search powered by Cinemeta, TVMaze, and MultiEmbed.">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="theme.js"></script>
+  <style>
+    #player-win .stage {
+      min-height: 480px;
+      height: 65vh;
+      max-height: 700px;
+    }
+    #player-win .stage iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    #mgrid.grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .provider-btn {
+      font-size: 11px;
+      padding: 3px 8px;
+      cursor: pointer;
+    }
+    .provider-btn.active {
+      background: #0b4fb3;
+      color: #fff;
+      font-weight: bold;
+    }
+    .media-card {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .media-card:hover {
+      transform: translateY(-2px);
+      border-color: #0b4fb3;
+    }
+    .ep-btn {
+      font-size: 11px;
+      padding: 3px 6px;
+      cursor: pointer;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .ep-btn.active {
+      background: #203b14;
+      color: #fff;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-<script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
 <div id="page">
 <header>
 <p class="logo"><a href="start.html">pastpapergenie <small>v3</small></a></p>
@@ -35,10 +72,8 @@
 <nav>
 <a href="start.html">Home</a>
 <a href="select.html">Games</a>
-<a href="anime.html">Anime</a>
 <a href="movies.html" class="start" aria-current="page">Movies</a>
-<a href="music.html">Music</a>
-<a href="manga.html">Manga</a>
+<a href="anime.html">Anime</a>
 <a href="search.html">Search</a>
 <a href="tools.html">Tools</a>
 <a href="settings.html">Settings</a>
@@ -47,26 +82,62 @@
 
 <div id="games">
 <main>
+  <!-- Search & Grid Window -->
   <div id="browser-win" class="win">
-    <h2>Movie & TV Browser</h2>
+    <h2>Movie & TV Shows Browser</h2>
     <div class="in">
       <form id="mbar" class="row" onsubmit="handleMovieSearch(event)">
-        <input id="mq" type="search" placeholder="Search a movie e.g. Interstellar, Spider-Man" aria-label="Search movies" style="flex:1"> 
+        <input id="mq" type="search" placeholder="Search any movie or show (e.g. Interstellar, Breaking Bad, Dune, Batman)" aria-label="Search movies" style="flex:1"> 
         <button class="go" type="submit">Search</button>
       </form>
-      <div id="mgrid" class="grid">Loading trending movies...</div>
+
+      <!-- Category Filter Tabs -->
+      <div style="display:flex; gap:6px; margin: 8px 0; align-items:center; flex-wrap:wrap;">
+        <strong style="font-size:11px;">FILTER:</strong>
+        <button type="button" class="category-btn active" onclick="setCategory('all', this)">All Titles</button>
+        <button type="button" class="category-btn" onclick="setCategory('movie', this)">Movies Only</button>
+        <button type="button" class="category-btn" onclick="setCategory('series', this)">TV Shows Only</button>
+        <button type="button" onclick="loadTrendingMovies()" style="margin-left:auto; font-size:11px;">Reset to Trending</button>
+      </div>
+
+      <div id="mgrid" class="grid">Loading trending movies & shows...</div>
     </div>
   </div>
 
+  <!-- Video Player Window -->
   <div id="player-win" class="win" hidden>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
       <h2 id="player-title" style="margin: 0;">Now Playing</h2>
-      <button type="button" onclick="closePlayer()">&larr; Back to List</button>
+      <button type="button" onclick="closePlayer()">&larr; Back to Catalog</button>
     </div>
+    
     <div class="in">
-      <div class="stage">
-        <iframe id="movie-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <!-- Stream Server Selector -->
+      <div style="display: flex; gap: 5px; margin-bottom: 8px; align-items: center; flex-wrap: wrap;">
+        <strong style="font-size: 11px;">STREAM SERVER:</strong>
+        <button type="button" id="srv-1" class="provider-btn active" onclick="switchServer('multiembed', this)">Server 1 (MultiEmbed)</button>
+        <button type="button" id="srv-2" class="provider-btn" onclick="switchServer('vidlink', this)">Server 2 (VidLink)</button>
+        <button type="button" id="srv-3" class="provider-btn" onclick="switchServer('smashy', this)">Server 3 (Smashy)</button>
       </div>
+
+      <div class="stage">
+        <iframe id="movie-iframe" src="" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+      </div>
+
+      <!-- TV Series Season & Episode Selector -->
+      <div id="tv-controls" style="display:none; margin-top: 12px; padding: 8px; background: rgba(0,0,0,0.03); border: 1px solid #ccc;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <strong style="font-size:12px;">SELECT EPISODE</strong>
+          <span id="seasonBadge" style="font-size:11px; color:#555;">Season 1</span>
+        </div>
+
+        <!-- Seasons list -->
+        <div id="seasonRow" style="display:flex; gap:4px; margin-bottom:8px; overflow-x:auto;"></div>
+
+        <!-- Episodes list -->
+        <div id="episodeGrid" style="display:flex; flex-wrap:wrap; gap:4px; max-height:160px; overflow-y:auto; background:#fff; padding:6px; border:1px solid #ddd;"></div>
+      </div>
+
       <div class="row" style="justify-content: flex-end; margin-top: 10px;">
         <button type="button" onclick="closePlayer()">Close Player</button>
       </div>
@@ -75,124 +146,304 @@
 </main>
 </div>
 
-<script>
-    document.addEventListener('keydown', function(e) {
-      var t = e.target;
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
-      var key = '';
-      try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
-      if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
-      try {
-        document.title = 'Google';
-        var f = document.querySelector("link[rel~='icon']");
-        if (f) f.href = 'https://www.google.com/favicon.ico';
-      } catch (err) {}
-      var go = true, url = 'https://classroom.google.com';
-      try {
-        go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
-        url = localStorage.getItem('dotgui_panic_url') || url;
-      } catch (err) {}
-      if (go && url) window.location.href = url;
-    });
-</script>
-
 <footer>
-  <p>Streaming powered by VidSrc & TMDB. Licence problem or takedown request: contact details are being set up and will be here soon.</p>
+  <p>Streaming powered by Cinemeta, TVMaze & MultiEmbed. License problem or takedown request: contact details are being set up and will be here soon.</p>
 </footer>
 </div>
 
 <script>
-    async function loadTrendingMovies() {
-        const grid = document.getElementById('mgrid');
-        if(!grid) return;
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Loading trending movies...</div>';
-        try {
-            const res = await fetch('https://api.themoviedb.org/3/trending/movie/day?api_key=2df35c7582b1d61a84f33b1e7798363a');
-            const data = await res.json();
-            renderMovieCards(data.results, grid);
-        } catch (e) {
-            const fallback = [
-                { id: 157336, title: "Interstellar", poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", release_date: "2014" },
-                { id: 27205, title: "Inception", poster_path: "/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg", release_date: "2010" },
-                { id: 550, title: "Fight Club", poster_path: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg", release_date: "1999" }
-            ];
-            renderMovieCards(fallback, grid);
-        }
-    }
+  let currentItem = null;
+  let currentCategory = 'all';
+  let currentSeason = 1;
+  let currentEpisode = 1;
+  let currentServer = 'multiembed';
+  let allLoadedItems = [];
+  let currentSeriesVideos = [];
 
-    async function handleMovieSearch(e) {
-        e.preventDefault();
-        const query = document.getElementById('mq').value.trim();
-        if(!query) { loadTrendingMovies(); return; }
-        const grid = document.getElementById('mgrid');
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Searching movies...</div>';
-        try {
-            const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=2df35c7582b1d61a84f33b1e7798363a&query=${encodeURIComponent(query)}`);
-            const data = await res.json();
-            if(!data.results || data.results.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">No movies found.</div>';
-                return;
+  const POPULAR_FALLBACKS = [
+    { id: 'tt0816692', name: 'Interstellar', type: 'movie', year: '2014', poster: 'https://images.metahub.space/poster/medium/tt0816692/img' },
+    { id: 'tt1375666', name: 'Inception', type: 'movie', year: '2010', poster: 'https://images.metahub.space/poster/medium/tt1375666/img' },
+    { id: 'tt0468569', name: 'The Dark Knight', type: 'movie', year: '2008', poster: 'https://images.metahub.space/poster/medium/tt0468569/img' },
+    { id: 'tt1160419', name: 'Dune: Part One', type: 'movie', year: '2021', poster: 'https://images.metahub.space/poster/medium/tt1160419/img' },
+    { id: 'tt15239678', name: 'Dune: Part Two', type: 'movie', year: '2024', poster: 'https://images.metahub.space/poster/medium/tt15239678/img' },
+    { id: 'tt6263850', name: 'Deadpool & Wolverine', type: 'movie', year: '2024', poster: 'https://images.metahub.space/poster/medium/tt6263850/img' },
+    { id: 'tt0137523', name: 'Fight Club', type: 'movie', year: '1999', poster: 'https://images.metahub.space/poster/medium/tt0137523/img' },
+    { id: 'tt0903747', name: 'Breaking Bad', type: 'series', year: '2008–2013', poster: 'https://images.metahub.space/poster/medium/tt0903747/img' },
+    { id: 'tt4574334', name: 'Stranger Things', type: 'series', year: '2016–2025', poster: 'https://images.metahub.space/poster/medium/tt4574334/img' },
+    { id: 'tt12637874', name: 'Fallout', type: 'series', year: '2024–', poster: 'https://images.metahub.space/poster/medium/tt12637874/img' }
+  ];
+
+  async function loadTrendingMovies() {
+    const grid = document.getElementById('mgrid');
+    if (!grid) return;
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Loading trending titles...</div>';
+
+    try {
+      const [movRes, serRes] = await Promise.allSettled([
+        fetch('https://v3-cinemeta.strem.io/catalog/movie/top.json'),
+        fetch('https://v3-cinemeta.strem.io/catalog/series/top.json')
+      ]);
+
+      let items = [];
+      if (movRes.status === 'fulfilled' && movRes.value.ok) {
+        const d = await movRes.value.json();
+        if (d.metas) items.push(...d.metas.slice(0, 14));
+      }
+      if (serRes.status === 'fulfilled' && serRes.value.ok) {
+        const d = await serRes.value.json();
+        if (d.metas) items.push(...d.metas.slice(0, 10));
+      }
+
+      if (items.length === 0) items = POPULAR_FALLBACKS;
+
+      allLoadedItems = items.map(formatItem);
+      renderCards(allLoadedItems, grid);
+    } catch (e) {
+      allLoadedItems = POPULAR_FALLBACKS.map(formatItem);
+      renderCards(allLoadedItems, grid);
+    }
+  }
+
+  function formatItem(m) {
+    return {
+      id: m.imdb_id || m.id,
+      name: m.name || m.title,
+      type: m.type || (m.first_air_date ? 'series' : 'movie'),
+      poster: m.poster || (m.poster_path ? 'https://image.tmdb.org/t/p/w300' + m.poster_path : 'https://images.metahub.space/poster/medium/' + (m.imdb_id || m.id) + '/img'),
+      year: (m.releaseInfo || m.year || m.release_date || '').toString().slice(0, 4)
+    };
+  }
+
+  async function handleMovieSearch(e) {
+    if (e) e.preventDefault();
+    const query = document.getElementById('mq').value.trim();
+    if (!query) { loadTrendingMovies(); return; }
+
+    const grid = document.getElementById('mgrid');
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Searching movies and series...</div>';
+
+    try {
+      const [mSearch, sSearch] = await Promise.allSettled([
+        fetch('https://v3-cinemeta.strem.io/catalog/movie/top/search=' + encodeURIComponent(query) + '.json'),
+        fetch('https://v3-cinemeta.strem.io/catalog/series/top/search=' + encodeURIComponent(query) + '.json')
+      ]);
+
+      let results = [];
+      if (mSearch.status === 'fulfilled' && mSearch.value.ok) {
+        const d = await mSearch.value.json();
+        if (d.metas) results.push(...d.metas);
+      }
+      if (sSearch.status === 'fulfilled' && sSearch.value.ok) {
+        const d = await sSearch.value.json();
+        if (d.metas) results.push(...d.metas);
+      }
+
+      if (results.length === 0) {
+        const tvRes = await fetch('https://api.tvmaze.com/search/shows?q=' + encodeURIComponent(query));
+        if (tvRes.ok) {
+          const tvData = await tvRes.json();
+          tvData.slice(0, 10).forEach(t => {
+            if (t.show) {
+              results.push({
+                id: t.show.externals?.imdb || ('tvm-' + t.show.id),
+                name: t.show.name,
+                type: 'series',
+                poster: t.show.image?.medium || t.show.image?.original,
+                year: (t.show.premiered || '').slice(0, 4)
+              });
             }
-            renderMovieCards(data.results, grid);
-        } catch(err) {
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Search failed. Check your network.</div>';
+          });
         }
+      }
+
+      if (results.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">No titles found for "' + query + '". Try another name!</div>';
+        return;
+      }
+
+      allLoadedItems = results.map(formatItem);
+      renderCards(allLoadedItems, grid);
+    } catch (err) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Search error. Check connection.</div>';
+    }
+  }
+
+  function setCategory(cat, btn) {
+    currentCategory = cat;
+    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const grid = document.getElementById('mgrid');
+    const filtered = allLoadedItems.filter(item => {
+      if (cat === 'all') return true;
+      return item.type === cat;
+    });
+    renderCards(filtered, grid);
+  }
+
+  function renderCards(list, grid) {
+    grid.innerHTML = '';
+    if (list.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">No titles found in this category.</div>';
+      return;
     }
 
-    function renderMovieCards(movies, grid) {
-        grid.innerHTML = '';
-        movies.forEach(m => {
-            const title = m.title || m.name;
-            const year = (m.release_date || m.first_air_date || '').substring(0,4);
-            const poster = m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'media/buttons/angry.webp';
-            const card = document.createElement('div');
-            card.style.cssText = 'border:1px solid #ccc; background:#fff; padding:6px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; border-radius:4px;';
-            card.onclick = () => playMovie(m.id, title);
-            card.innerHTML = `
-                <img src="${poster}" alt="${title}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border:1px solid #ddd; margin-bottom:4px; border-radius:2px;">
-                <div>
-                    <h3 style="font-size:12px; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${title}">${title}</h3>
-                    <span style="font-size:10px; color:#666;">${year}</span>
-                </div>
-                <button type="button" style="margin-top:4px; width:100%; font-size:10px; padding:3px;">WATCH</button>
-            `;
-            grid.appendChild(card);
-        });
+    list.forEach(m => {
+      const card = document.createElement('div');
+      card.className = 'media-card';
+      card.onclick = () => selectMedia(m);
+
+      const typeLabel = m.type === 'series' ? 'TV' : 'Movie';
+      const posterImg = m.poster || 'https://images.metahub.space/poster/medium/' + m.id + '/img';
+
+      card.innerHTML = `
+        <img src="${posterImg}" alt="${m.name}" style="width:100%; aspect-ratio:2/3; object-fit:cover; border:1px solid #ddd; margin-bottom:4px; border-radius:2px;" onerror="this.src='https://images.metahub.space/poster/medium/tt0816692/img'">
+        <div>
+          <h3 style="font-size:12px; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${m.name}">${m.name}</h3>
+          <span style="font-size:10px; color:#666;">${m.year || '2024'} &bull; ${typeLabel}</span>
+        </div>
+        <button type="button" style="margin-top:4px; width:100%; font-size:10px; padding:3px;">WATCH</button>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  async function selectMedia(item) {
+    currentItem = item;
+    currentSeason = 1;
+    currentEpisode = 1;
+
+    document.getElementById('browser-win').style.display = 'none';
+    document.getElementById('player-win').removeAttribute('hidden');
+    document.getElementById('player-title').innerText = item.name + (item.type === 'series' ? ' (S1:E1)' : '');
+
+    const tvControls = document.getElementById('tv-controls');
+    if (item.type === 'series') {
+      tvControls.style.display = 'block';
+      await loadSeriesEpisodes(item.id);
+    } else {
+      tvControls.style.display = 'none';
     }
 
-    function playMovie(id, title) {
-        document.getElementById('browser-win').style.display = 'none';
-        document.getElementById('player-win').removeAttribute('hidden');
-        document.getElementById('player-title').innerText = title;
-        // VidSrc Embed Endpoint (Robust & Reliable)
-        document.getElementById('movie-iframe').src = `https://vidsrc.xyz/embed/movie?tmdb=${id}`;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    playCurrentStream();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function loadSeriesEpisodes(imdbId) {
+    const seasonRow = document.getElementById('seasonRow');
+    const episodeGrid = document.getElementById('episodeGrid');
+    seasonRow.innerHTML = '<span style="font-size:11px;">Loading seasons...</span>';
+    episodeGrid.innerHTML = '';
+
+    try {
+      const res = await fetch('https://v3-cinemeta.strem.io/meta/series/' + imdbId + '.json');
+      if (res.ok) {
+        const d = await res.json();
+        if (d.meta && d.meta.videos) {
+          currentSeriesVideos = d.meta.videos;
+          buildSeasonButtons();
+          return;
+        }
+      }
+    } catch (e) {}
+
+    currentSeriesVideos = [];
+    for (let s = 1; s <= 4; s++) {
+      for (let e = 1; e <= 12; e++) {
+        currentSeriesVideos.push({ season: s, number: e, name: 'Episode ' + e });
+      }
+    }
+    buildSeasonButtons();
+  }
+
+  function buildSeasonButtons() {
+    const seasonRow = document.getElementById('seasonRow');
+    seasonRow.innerHTML = '';
+
+    const seasons = Array.from(new Set(currentSeriesVideos.map(v => v.season).filter(s => s > 0))).sort((a,b) => a - b);
+    if (seasons.length === 0) seasons.push(1);
+
+    seasons.forEach(s => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'provider-btn' + (s === currentSeason ? ' active' : '');
+      b.innerText = 'Season ' + s;
+      b.onclick = () => {
+        currentSeason = s;
+        document.querySelectorAll('#seasonRow button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.getElementById('seasonBadge').innerText = 'Season ' + s;
+        buildEpisodeButtons();
+      };
+      seasonRow.appendChild(b);
+    });
+
+    buildEpisodeButtons();
+  }
+
+  function buildEpisodeButtons() {
+    const episodeGrid = document.getElementById('episodeGrid');
+    episodeGrid.innerHTML = '';
+
+    const eps = currentSeriesVideos.filter(v => v.season === currentSeason);
+    const list = eps.length > 0 ? eps : Array.from({length: 12}, (_, i) => ({ season: currentSeason, number: i+1, name: 'Episode ' + (i+1) }));
+
+    list.forEach(ep => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.id = 'ep-btn-' + ep.number;
+      b.className = 'ep-btn' + (ep.number === currentEpisode ? ' active' : '');
+      b.innerText = 'EP ' + ep.number + ': ' + (ep.name || 'Episode ' + ep.number);
+      b.onclick = () => {
+        currentEpisode = ep.number;
+        document.querySelectorAll('#episodeGrid button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.getElementById('player-title').innerText = currentItem.name + ' (S' + currentSeason + ':E' + currentEpisode + ')';
+        playCurrentStream();
+      };
+      episodeGrid.appendChild(b);
+    });
+  }
+
+  function switchServer(srv, btn) {
+    currentServer = srv;
+    document.querySelectorAll('.provider-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    playCurrentStream();
+  }
+
+  function playCurrentStream() {
+    if (!currentItem) return;
+    const id = currentItem.id;
+    const isTv = currentItem.type === 'series';
+    const s = currentSeason;
+    const e = currentEpisode;
+
+    let url = '';
+    switch (currentServer) {
+      case 'multiembed':
+        url = isTv ? `https://multiembed.mov/?video_id=${id}&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}`;
+        break;
+      case 'vidlink':
+        url = isTv ? `https://vidlink.pro/tv/${id}/${s}/${e}` : `https://vidlink.pro/movie/${id}`;
+        break;
+      case 'smashy':
+        url = isTv ? `https://player.smashystream.com/tv/${id}?s=${s}&e=${e}` : `https://player.smashystream.com/movie/${id}`;
+        break;
+      default:
+        url = isTv ? `https://multiembed.mov/?video_id=${id}&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}`;
     }
 
-    function closePlayer() {
-        document.getElementById('player-win').setAttribute('hidden', '');
-        document.getElementById('browser-win').style.display = 'block';
-        document.getElementById('movie-iframe').src = '';
-    }
+    document.getElementById('movie-iframe').src = url;
+  }
 
-    loadTrendingMovies();
-</script>
-<script>
-    (function() {
-      const value = localStorage.getItem('tabCloaker') || 'default';
-      const favicon = document.querySelector("link[rel~='icon']") || (() => {
-        const link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-        return link;
-      })();
-      if (value === 'google') { document.title = 'Google'; favicon.href = 'https://www.google.com/favicon.ico'; }
-      else if (value === 'vocab') { document.title = 'My Learning | Vocabulary.com'; favicon.href = 'https://www.vocabulary.com/favicon.ico'; }
-      else if (value === 'canvas') { document.title = 'Canvas'; favicon.href = 'https://canvas.instructure.com/favicon.ico'; }
-      else if (value === 'drive') { document.title = 'Google Drive'; favicon.href = 'https://drive.google.com/favicon.ico'; }
-      else if (value === 'docs') { document.title = 'Google Docs'; favicon.href = 'https://docs.google.com/favicon.ico'; }
-      else { favicon.href = 'favicon.ico'; }
-    })();
+  function closePlayer() {
+    document.getElementById('player-win').setAttribute('hidden', '');
+    document.getElementById('browser-win').style.display = 'block';
+    document.getElementById('movie-iframe').src = '';
+  }
+
+  loadTrendingMovies();
 </script>
 </body>
 </html>
