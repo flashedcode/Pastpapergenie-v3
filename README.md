@@ -4,8 +4,6 @@
   A UBG project built to be clean, simple, and easy to use. With over 700 games sourced from multiple stores, 40 apps, a fast and proxied browser, extensive customization options, and much more, this is easily one of the best unblocked websites with frutiger aero retro type theme.
 </p>
 
- 
-<p align="center">Sponsor my project!</p>
 
   [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O4O12A63EY)
 
