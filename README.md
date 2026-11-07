@@ -17,9 +17,10 @@
 * [x] Apps (not many tho)
 * [x] Proxy
 * [x] Anime
+* [x] Movies
+* [ ] Chatroom
 * [ ] Music
-* [ ] Movies
-* [ ] Chatroom (not yet)
+* [ ] Browser with extentions
 
 ## Deployment
 
