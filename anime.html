@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anime Browser & Free Streaming - pastpapergenie v3</title>
+<meta name="description" content="Browse and stream your favorite anime subbed and dubbed in HD using pastpapergenie v3's anime browser powered by MegaPlay and AniList.">
+<meta name="keywords" content="anime browser, watch anime online, subbed anime, dubbed anime, pastpapergenie, megaplay, anilist">
+<meta property="og:title" content="Anime Browser | pastpapergenie v3">
+<meta property="og:description" content="Search and stream anime instantly with sub and dub options.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="styles.css" />
+<script src="theme.js"></script>
+<style>
+  /* Custom responsive sizing for larger anime player screen */
+  #player-win .stage {
+    min-height: 480px;
+    height: 65vh;
+    max-height: 700px;
+  }
+  #player-win .stage iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  #alist.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+</style>
+</head>
+<body>
+<script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
+<div id="page">
+<header>
+<p class="logo"><a href="start.html">pastpapergenie <small>v3</small></a></p>
+<p class="blurb">Browser games and web search. follow @xrompf on tiktok</p>
+</header>
+<nav>
+<a href="start.html">Home</a>
+<a href="select.html">Games</a>
+<a href="anime.html" class="start" aria-current="page">Anime</a>
+<a href="search.html">Search</a>
+<a href="tools.html">Tools</a>
+<a href="settings.html">Settings</a>
+
+</nav>
+
+<div id="games">
+<main>
+  <!-- Search & Grid Window -->
+  <div id="browser-win" class="win">
+    <h2>Anime Browser</h2>
+    <div class="in">
+      <form id="abar" class="row" onsubmit="handleSearch(event)">
+        <input id="aq" type="search" placeholder="Search a title, e.g. Naruto" aria-label="Search anime" style="flex:1"> 
+        <button class="go" type="submit">Search</button>
+      </form>
+      <div id="alist" class="grid">Loading recommended anime...</div>
+    </div>
+  </div>
+
+  <!-- Native Video Player Window (Enlarged Screen) -->
+  <div id="player-win" class="win" hidden>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <h2 id="player-title" style="margin: 0;">Now Playing</h2>
+      <button type="button" onclick="closePlayer()">&larr; Back to List</button>
+    </div>
+    
+    <div class="in">
+      <!-- MegaPlay Server Selector (Sub / Dub) -->
+      <div style="display: flex; gap: 6px; margin-bottom: 10px; align-items: center;">
+        <strong style="font-size: 11px;">SERVER:</strong>
+        <button type="button" id="btn-sub" class="provider-btn active" onclick="setSource('sub', this)">MegaPlay (Sub)</button>
+        <button type="button" id="btn-dub" class="provider-btn" onclick="setSource('dub', this)">MegaPlay (Dub)</button>
+      </div>
+
+      <div class="stage">
+        <iframe id="mp-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      </div>
+
+      <!-- Episode Selection Grid -->
+      <div style="margin-top: 12px; padding: 8px; background: rgba(0,0,0,0.03); border: 1px solid #ccc;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <strong style="font-size: 12px;">SELECT EPISODE</strong>
+          <span id="episodeCountBadge" style="font-size: 11px;"></span>
+        </div>
+        <div id="episodeGrid" style="display: flex; flex-wrap: wrap; gap: 4px; max-height: 180px; overflow-y: auto; background: #fff; padding: 6px; border: 1px solid #ddd;"></div>
+      </div>
+
+      <div class="row" style="justify-content: flex-end; margin-top: 10px;">
+        <button type="button" onclick="closePlayer()">Close Player</button>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+    // dotgui-panic: global panic key, guards typing
+    document.addEventListener('keydown', function(e) {
+      var t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      var key = '';
+      try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
+      if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
+      try {
+        document.title = 'Google';
+        var f = document.querySelector("link[rel~='icon']");
+        if (f) f.href = 'https://www.google.com/favicon.ico';
+      } catch (err) {}
+      var go = true, url = 'https://classroom.google.com';
+      try {
+        go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
+        url = localStorage.getItem('dotgui_panic_url') || url;
+      } catch (err) {}
+      if (go && url) window.location.href = url;
+    });
+</script>
+
+<footer>
+  <p>Streaming powered by MegaPlay. Licence problem or takedown request: contact details are being set up and will be here soon.</p>
+</footer>
+</div>
+
+<script>
+    let currentAnimeId = null;
+    let currentAnimeTitle = '';
+    let currentEp = 1;
+    let totalEpisodes = 12;
+    let currentType = 'sub';
+
+    async function loadRecommended() {
+        const grid = document.getElementById('alist');
+        if(!grid) return;
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Loading recommended hits...</div>';
+
+        const graphqlQuery = `
+            query {
+                Page (perPage: 24) {
+                    media (type: ANIME, sort: POPULARITY_DESC) {
+                        id
+                        title { romaji english }
+                        coverImage { large }
+                        episodes
+                    }
+                }
+            }
+        `;
+
+        try {
+            const response = await fetch('https://graphql.anilist.co', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: graphqlQuery })
+            });
+            const data = await response.json();
+            renderCards(data.data.Page.media, grid);
+        } catch (err) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Type an anime name above to begin.</div>';
+        }
+    }
+
+    async function handleSearch(event) {
+        event.preventDefault();
+        const query = document.getElementById('aq').value.trim();
+        if (!query) { loadRecommended(); return; }
+
+        const grid = document.getElementById('alist');
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Searching database...</div>';
+
+        const graphqlQuery = `
+            query ($search: String) {
+                Page (perPage: 24) {
+                    media (search: $search, type: ANIME) {
+                        id
+                        title { romaji english }
+                        coverImage { large }
+                        episodes
+                    }
+                }
+            }
+        `;
+
+        try {
+            const response = await fetch('https://graphql.anilist.co', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: graphqlQuery, variables: { search: query } })
+            });
+            const data = await response.json();
+            const animeList = data.data.Page.media;
+            
+            if (animeList.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">No anime found.</div>';
+                return;
+            }
+            renderCards(animeList, grid);
+        } catch (err) {
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Failed to fetch results.</div>';
+        }
+    }
+
+    function renderCards(animeList, grid) {
+        grid.innerHTML = '';
+        animeList.forEach(anime => {
+            const title = anime.title.english || anime.title.romaji;
+            const eps = anime.episodes || '?';
+            const card = document.createElement('div');
+            card.style.cssText = 'border:1px solid #ccc; background:#fff; padding:6px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; border-radius:4px;';
+            card.onclick = () => selectAnime(anime.id, title, anime.episodes);
+
+            card.innerHTML = `
+                <img src="${anime.coverImage.large}" alt="${title}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border:1px solid #ddd; margin-bottom:4px; border-radius:2px;">
+                <div>
+                    <h3 style="font-size:12px; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${title}">${title}</h3>
+                    <span style="font-size:10px; color:#666;">${eps} Episodes</span>
+                </div>
+                <button type="button" style="margin-top:4px; width:100%; font-size:10px; padding:3px;">WATCH</button>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function selectAnime(id, title, eps, startEp = 1) {
+        currentAnimeId = id;
+        currentAnimeTitle = title;
+        totalEpisodes = eps || 12;
+
+        document.getElementById('browser-win').style.display = 'none';
+        document.getElementById('player-win').removeAttribute('hidden');
+        document.getElementById('player-title').innerText = title;
+        document.getElementById('episodeCountBadge').innerText = `${totalEpisodes} EPS`;
+
+        buildEpisodeList();
+        playEpisode(startEp);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function buildEpisodeList() {
+        const episodeGrid = document.getElementById('episodeGrid');
+        episodeGrid.innerHTML = '';
+        const limit = Math.min(totalEpisodes, 1500);
+
+        for (let i = 1; i <= limit; i++) {
+            const btn = document.createElement('button');
+            btn.id = `ep-btn-${i}`;
+            btn.innerText = `EP ${i}`;
+            btn.style.cssText = 'font-size:11px; padding:2px 6px; cursor:pointer;';
+            btn.onclick = () => playEpisode(i);
+            episodeGrid.appendChild(btn);
+        }
+    }
+
+    function setSource(type, btnEl) {
+        currentType = type;
+        document.querySelectorAll('.provider-btn').forEach(b => b.classList.remove('active', 'btn-active'));
+        btnEl.classList.add('active');
+        playEpisode(currentEp);
+    }
+
+    function playEpisode(epNum) {
+        currentEp = epNum;
+        document.querySelectorAll('#episodeGrid button').forEach(b => {
+            b.style.background = '';
+            b.style.color = '';
+        });
+
+        const activeBtn = document.getElementById(`ep-btn-${epNum}`);
+        if(activeBtn) {
+            activeBtn.style.background = '#203b14';
+            activeBtn.style.color = '#fff';
+        }
+
+        // MegaPlay Embed Endpoint
+        const embedUrl = `https://megaplay.buzz/stream/ani/${currentAnimeId}/${epNum}/${currentType}`;
+        document.getElementById('mp-iframe').src = embedUrl;
+    }
+
+    function closePlayer() {
+        document.getElementById('player-win').setAttribute('hidden', '');
+        document.getElementById('browser-win').style.display = 'block';
+        document.getElementById('mp-iframe').src = '';
+    }
+
+    // Load recommendations on initial load
+    loadRecommended();
+</script>
+
+<script>
+    // Tab cloaker script for all pages
+    (function() {
+      const value = localStorage.getItem('tabCloaker') || 'default';
+      const favicon = document.querySelector("link[rel~='icon']") || (() => {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+        return link;
+      })();
+      if (value === 'google') {
+        document.title = 'Google';
+        favicon.href = 'https://www.google.com/favicon.ico';
+      } else if (value === 'vocab') {
+        document.title = 'My Learning | Vocabulary.com';
+        favicon.href = 'https://www.vocabulary.com/favicon.ico';
+      } else if (value === 'canvas') {
+          document.title = 'Canvas';
+          favicon.href = 'https://canvas.instructure.com/favicon.ico';
+        } else if (value === 'drive') {
+          document.title = 'Google Drive';
+          favicon.href = 'https://drive.google.com/favicon.ico';
+        } else if (value === 'docs') {
+          document.title = 'Google Docs';
+          favicon.href = 'https://docs.google.com/favicon.ico';
+        } else {
+        favicon.href = 'favicon.ico';
+      }
+    })();
+</script>
+</body>
+</html>
