@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>pastpapergenie v3</title>
-  <meta name="description" content="Best pastpaper website.">
+  <meta name="description" content="Best past papers.">
   <link rel="stylesheet" href="styles.css" />
   <script src="theme.js"></script>
   <style>
@@ -116,8 +116,8 @@
       <!-- Stream Server Selector -->
       <div style="display: flex; gap: 5px; margin-bottom: 8px; align-items: center; flex-wrap: wrap;">
         <strong style="font-size: 11px;">STREAM SERVER:</strong>
-        <button type="button" id="srv-2" class="provider-btn" onclick="switchServer('vidlink', this)">Server 2 (VidLink)</button>
-        <button type="button" id="srv-3" class="provider-btn" onclick="switchServer('smashy', this)">Server 3 (Smashy)</button>
+        <button type="button" id="srv-1" class="provider-btn active" onclick="switchServer('vidlink', this)">Server 1 (VidLink)</button>
+        <button type="button" id="srv-3" class="provider-btn" onclick="switchServer('smashy', this)">Server 2 (Smashy)</button>
       </div>
 
       <div class="stage">
@@ -147,7 +147,7 @@
 </div>
 
 <footer>
-  <p>Streaming powered by Cinemeta, TVMaze & MultiEmbed. License problem or takedown request: contact details are being set up and will be here soon.</p>
+  <p>Streaming powered by Cinemeta, TVMaze & VidLink. License problem or takedown request: contact details are being set up and will be here soon.</p>
 </footer>
 </div>
 
@@ -156,7 +156,7 @@
   let currentCategory = 'all';
   let currentSeason = 1;
   let currentEpisode = 1;
-  let currentServer = 'multiembed';
+  let currentServer = 'vidlink';
   let allLoadedItems = [];
   let currentSeriesVideos = [];
 
@@ -421,17 +421,17 @@
 
     let url = '';
     switch (currentServer) {
-      case 'multiembed':
-        url = isTv ? `https://multiembed.mov/?video_id=${id}&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}`;
-        break;
       case 'vidlink':
         url = isTv ? `https://vidlink.pro/tv/${id}/${s}/${e}` : `https://vidlink.pro/movie/${id}`;
+        break;
+      case 'vidsrc':
+        url = isTv ? `https://vidsrc.xyz/embed/tv?imdb=${id}&season=${s}&episode=${e}` : `https://vidsrc.xyz/embed/movie?imdb=${id}`;
         break;
       case 'smashy':
         url = isTv ? `https://player.smashystream.com/tv/${id}?s=${s}&e=${e}` : `https://player.smashystream.com/movie/${id}`;
         break;
       default:
-        url = isTv ? `https://multiembed.mov/?video_id=${id}&s=${s}&e=${e}` : `https://multiembed.mov/?video_id=${id}`;
+        url = isTv ? `https://vidlink.pro/tv/${id}/${s}/${e}` : `https://vidlink.pro/movie/${id}`;
     }
 
     document.getElementById('movie-iframe').src = url;
