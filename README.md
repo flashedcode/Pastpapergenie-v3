@@ -113,4 +113,12 @@ The following changes have been made to this fork:
 * Change 3
 
 ---
- 
+# Copyright and takedowns
+We do not own any of the games or tools hosted here. Most were added by request. If you own something on this site and want it removed, open an issue with proof of ownership and it will be taken down. (Not legal advice, just our policy.)
+
+# Credits
+the search proxy was inspired from [DotGUI](https://github.com/dotgui-dev/DotGUI)
+
+Game rights holders, via the takedown process above.
+Mercury Workshop for Scramjet.
+Game sources: UGS (main games), GN-Math (exotic games), plus individual request sources.
