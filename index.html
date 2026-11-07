@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Starting Menu</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="monetag" content="cd3f6daab1950d56cc8284e65a83b1ba">
+<script>(function(){try{if(window.self!==window.top)return;}catch(e){return;}var s=document.createElement('script');s.dataset.zone='11810591';s.src='https://nap5k.com/tag.min.js';(document.documentElement||document.body).appendChild(s);})();</script>
+    <link rel="stylesheet" href="styles.css" />
+        <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-Q919W0VJ1S');
+      </script>
+  </head>
+  <body>
+    <script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
+  <div id="main">
+    <main>
+      <div id="games">
+        <h1>Click here to continue:</h1>
+        <button type="button" class="nav-btn" onclick="location.href='start.html'">Proceed</button>
+        <br>
+        <h2>Alternative Access Methods:</h2>
+        <button type="button" class="nav-btn" onclick="location.href='launch.html'">via About:Blank (very reliable)</button>
+        <button type="button" class="nav-btn" onclick="location.href='https://github.com/dotgui-dev/DotGUI/releases/download/Single-V1/dotgui.html'">via Single File (offline play)</button>
+      </div>
+      <br>
+      <p>You can also <a href="https://github.com/dotgui-dev/DotGUI?tab=readme-ov-file#for-hosts">deploy to other hosting providers for your own links!</a></p>
+    </main>
+  </div>
+  <script>
+          // dotgui-panic: global panic key, guards typing
+          document.addEventListener('keydown', function(e) {
+            var t = e.target;
+            if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+            var key = '';
+            try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
+            if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
+            try {
+              document.title = 'Google';
+              var f = document.querySelector("link[rel~='icon']");
+              if (f) f.href = 'https://www.google.com/favicon.ico';
+            } catch (err) {}
+            var go = true, url = 'https://classroom.google.com';
+            try {
+              go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
+              url = localStorage.getItem('dotgui_panic_url') || url;
+            } catch (err) {}
+            if (go && url) window.location.href = url;
+          });
+        </script>
+</body>
+  <script>
+    (function() {
+      const value = localStorage.getItem('tabCloaker') || 'default';
+      const favicon = document.querySelector("link[rel~='icon']") || (() => {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+        return link;
+      })();
+      if (value === 'google') {
+        document.title = 'Google';
+        favicon.href = 'https://www.google.com/favicon.ico';
+      } else if (value === 'vocab') {
+        document.title = 'My Learning | Vocabulary.com';
+        favicon.href = 'https://www.vocabulary.com/favicon.ico';
+      } else if (value === 'canvas') {
+          document.title = 'Canvas';
+          favicon.href = 'https://canvas.instructure.com/favicon.ico';
+        } else if (value === 'drive') {
+          document.title = 'Google Drive';
+          favicon.href = 'https://drive.google.com/favicon.ico';
+        } else if (value === 'docs') {
+          document.title = 'Google Docs';
+          favicon.href = 'https://docs.google.com/favicon.ico';
+        } else {
+        favicon.href = 'favicon.ico';
+      }
+    })();
+  </script>
+  <footer>
+  </footer>
+</html>

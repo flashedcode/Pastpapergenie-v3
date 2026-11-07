@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Outfit, system-ui, sans-serif;
+      background-color: #066b99;
+
+      color: #b1e8fc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px;
+    }
+    #clock {
+      font-size: 64px;
+      font-weight: 300;
+      color: #00f2ff;
+      letter-spacing: 4px;
+    }
+    #home-search {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 560px;
+    }
+    #home-search input {
+      flex: 1;
+      font-family: Outfit, sans-serif;
+      font-size: 1.1em;
+      padding: 0.8em 1.5em;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: #022c3a;
+      color: #b1e8fc;
+      transition: box-shadow 0.2s;
+    }
+    #home-search input:focus { box-shadow: 0 0 0 2px #00eaff; }
+    #home-search input::placeholder { color: #066b99; }
+
+    body[data-theme="dark"] {
+      background-color: #000;
+      background-image:
+        linear-gradient(160deg, #043a5c 0%, #032f4c 30%, #000a24 70%, #000000 100%);
+    }
+
+    body[data-theme="light"] {
+      background-color: #e9f7fc;
+      background-image:
+        linear-gradient(160deg, #bfe6f2 0%, #d8eff7 30%, #f2fafd 70%, #ffffff 100%);
+      color: #000;
+    }
+
+    body[data-theme="light"] #clock {
+      color: #066b99;
+    }
+
+    body[data-theme="light"] #home-search input {
+      background: #ffffff;
+      color: #000;
+      border: 1px solid rgba(4, 112, 143, 0.35);
+    }
+
+    body[data-theme="light"] #home-search input::placeholder {
+      color: #066b99;
+    }
+
+    body[data-theme="primordial"] {
+      background-color: #000;
+      background-image:
+        linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 30%, #050505 70%, #000000 100%);
+      color: #fff;
+    }
+
+    body[data-theme="primordial"] #clock {
+      color: #fff;
+    }
+
+    body[data-theme="primordial"] #home-search input {
+      background: #0d0d0d;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    body[data-theme="primordial"] #home-search input::placeholder {
+      color: #888;
+    }
+
+    body[data-theme="fall"] {
+      background-color: #241105;
+      background-image:
+        linear-gradient(160deg, #9a5416 0%, #7a3f0e 30%, #4a2408 70%, #241105 100%);
+      color: #ffe9c9;
+    }
+
+    body[data-theme="fall"] #clock {
+      color: #ffa14d;
+    }
+
+    body[data-theme="fall"] #home-search input {
+      background: #3a1c07;
+      color: #ffe9c9;
+      border: 1px solid rgba(240, 136, 42, 0.4);
+    }
+
+    body[data-theme="fall"] #home-search input:focus { box-shadow: 0 0 0 2px #ffa14d; }
+    body[data-theme="fall"] #home-search input::placeholder { color: #c97a2e; }
+
+  </style>
+</head>
+<body>
+  <script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
+  <div id="clock">00:00:00</div>
+  <form id="home-search">
+    <input id="q" type="text" placeholder="Search or enter URL..." autocomplete="off" spellcheck="false">
+  </form>
+
+  <script>
+    function tick() {
+      var d = new Date();
+      var p = function(n) { return (n < 10 ? '0' : '') + n; };
+      document.getElementById('clock').textContent =
+        p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    function resolve(input) {
+      var q = input.trim();
+      if (!q) return null;
+      if (/^https?:\/\//i.test(q)) return q;
+      if (q.indexOf(' ') === -1 && q.indexOf('.') !== -1) return 'https://' + q;
+      return 'https://html.duckduckgo.com/html/?q=' + encodeURIComponent(q);
+    }
+    function send(url) {
+      parent.postMessage({ type: 'dotgui-go', url: url }, '*');
+    }
+    document.getElementById('home-search').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var url = resolve(document.getElementById('q').value);
+      if (url) send(url);
+    });
+
+  </script>
+</body>
+</html>

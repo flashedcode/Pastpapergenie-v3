@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="monetag" content="cd3f6daab1950d56cc8284e65a83b1ba">
+  <title>Launch DotGUI</title>
+
+  <script>
+    (function () {
+      try { if (window.self !== window.top) return; } catch (e) { return; }
+      var s = document.createElement('script');
+      s.dataset.zone = '11810591';
+      s.src = 'https://nap5k.com/tag.min.js';
+      (document.documentElement || document.body).appendChild(s);
+    })();
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-Q919W0VJ1S');
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="games">
+    <main>
+      <h1>Launching DotGUI...</h1>
+      <p id="launch-status">Opening DotGUI automatically. If it does not appear, allow pop-ups and try again.</p>
+      <button class="button" id="launch-button" type="button">Launch</button>
+    </main>
+  </div>
+
+  <script>
+    function launch() {
+      const status = document.getElementById('launch-status');
+
+      const win = window.open('about:blank', '_blank');
+
+      if (!win) {
+        if (status) {
+          status.textContent = 'Popup blocked. Allow pop-ups or click the button below to open DotGUI.';
+        }
+        return;
+      }
+
+      win.document.open();
+      win.document.write(`
+        <!doctype html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>DotGUI</title>
+            <style>
+              html, body, iframe {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                border: 0;
+                overflow: hidden;
+              }
+            </style>
+          </head>
+          <body>
+            <iframe src="start.html" title="DotGUI"></iframe>
+          </body>
+        </html>
+      `);
+      win.document.close();
+      win.focus();
+
+      if (status) {
+        status.textContent = 'DotGUI is opening in a new tab.';
+      }
+    }
+
+    document.getElementById('launch-button').addEventListener('click', launch);
+    window.addEventListener('load', () => {
+      setTimeout(launch, 250);
+    });
+  </script>
+</body>
+</html>

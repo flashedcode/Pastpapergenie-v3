@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DotGUI Search</title>
+    <link rel="stylesheet" href="styles.css" />
+        <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-Q919W0VJ1S');
+      </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #00082e;
+            background-image:
+                linear-gradient(160deg, #0a7fae 0%, #066b99 30%, #001a4d 70%, #00082e 100%);
+            background-attachment: fixed;
+            color: #b1e8fc;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            font-family: Outfit, system-ui, sans-serif;
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            margin: 12px 12px 0;
+            background: #0a2e3f;
+            border: solid 1px #000000;
+            border-radius: 50px;
+            align-items: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .toolbar button {
+            background: rgb(0, 0, 0);
+            border: none;
+            color: rgb(0, 242, 255);
+            font-family: Outfit, sans-serif;
+            font-weight: 425;
+            padding: 8px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .toolbar button:hover {
+            background: #02141c;
+            transform: scale(1.05);
+        }
+
+        .toolbar button:active {
+            transform: scale(0.95);
+        }
+
+        #homeBtn {
+            font-size: 20px;
+            padding: 4px 14px;
+        }
+
+        .toolbar input {
+            flex: 1;
+            font-family: Outfit, sans-serif;
+            font-size: 1em;
+            padding: 0.8em 1.5em;
+            border-radius: 50px;
+            border: solid 1px rgba(0, 242, 255, 0.35);
+            outline: none;
+            background: #022c3a;
+            color: #b1e8fc;
+            transition: box-shadow 0.2s;
+        }
+
+        .toolbar input:focus {
+            box-shadow: 0 0 0 2px #00eaff;
+        }
+
+        iframe {
+            width: 100%;
+            flex: 1;
+            border: none;
+            background: #111;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #frameWrap {
+            position: relative;
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #frameWrap iframe {
+            flex: 1;
+        }
+
+        #blocked {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(1, 15, 21, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 5;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        #blocked[hidden] {
+            display: none;
+        }
+
+        .blocked-card {
+            font-family: Outfit, Ubuntu, sans-serif;
+            color: #b1e8fc;
+            background: rgba(1, 15, 21, 0.6);
+            border: 1px solid rgba(0, 234, 255, 0.35);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            max-width: 420px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .blocked-card h2 {
+            color: #00eaff;
+            margin-bottom: 0.6rem;
+            font-size: 1.4em;
+        }
+
+        .blocked-card p {
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .blocked-card button {
+            font-family: Outfit, Ubuntu, sans-serif;
+            background: #00eaff;
+            color: #010f15;
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.6rem;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .blocked-card button:hover {
+            background: #4df3ff;
+        }
+
+        body[data-theme="fall"] {
+            background-color: #241105;
+            background-image:
+                linear-gradient(160deg, #9a5416 0%, #7a3f0e 30%, #4a2408 70%, #241105 100%);
+            color: #ffe9c9;
+        }
+
+        body[data-theme="fall"] .toolbar {
+            background: #3a1c07;
+            border: solid 1px rgba(240, 136, 42, 0.4);
+        }
+
+        body[data-theme="fall"] .toolbar button {
+            background: #1c0e04;
+            color: #ffa14d;
+        }
+
+        body[data-theme="fall"] .toolbar button:hover {
+            background: #000000;
+        }
+
+        body[data-theme="fall"] .toolbar input {
+            background: #3a1c07;
+            color: #ffe9c9;
+            border: solid 1px rgba(240, 136, 42, 0.4);
+        }
+
+        body[data-theme="fall"] .toolbar input:focus {
+            box-shadow: 0 0 0 2px #ffa14d;
+        }
+
+        body[data-theme="fall"] .blocked-card {
+            color: #ffe9c9;
+            background: rgba(28, 14, 4, 0.9);
+            border: 1px solid rgba(240, 136, 42, 0.4);
+        }
+
+        body[data-theme="fall"] .blocked-card h2 {
+            color: #ffa14d;
+        }
+
+        body[data-theme="fall"] .blocked-card button {
+            background: #ffa14d;
+            color: #241105;
+        }
+
+        body[data-theme="fall"] .blocked-card button:hover {
+            background: #ffc37e;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+      <button type="button" class="nav-btn nav-home-btn"  onclick="location.href='start.html'">
+        <img src="favicon.ico" width="40px" height="40px" alt="Home">
+      </button>
+      <button type="button" class="nav-btn" onclick="window.location.href='select.html'">
+        <img src="media/nav-buttons/game.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" aria-current="page" onclick="location.href='search.html'">
+        <img src="media/nav-buttons/search.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" onclick="location.href='tools.html'">
+        <img src="media/nav-buttons/tools.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" onclick="location.href='settings.html'">
+        <img src="media/nav-buttons/settings.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" onclick="location.href='disclaimer.html'">
+        <img src="media/nav-buttons/disclaimer.svg" width="40px" height="40px">
+      </button>
+    </nav>
+    <div class="container">
+        <div class="toolbar">
+            <div class="nav-buttons">
+                <button id="homeBtn" title="Home">⌂</button>
+                <button id="backBtn" title="Back">←</button>
+                <button id="forwardBtn" title="Forward">→</button>
+                <button id="reloadBtn" title="Reload">↻</button>
+            </div>
+            <input type="text" id="urlInput" placeholder="Enter URL...">
+            <button id="goBtn">Go</button>
+        </div>
+        <div id="frameWrap">
+            <iframe id="browserFrame" title="Scramjet Browser" src="search-home.html"></iframe>
+            <div id="blocked" hidden>
+                <div class="blocked-card">
+                    <h2>Proxy blocked</h2>
+                    <p>Couldn't reach the proxy server. Check your connection and hit Retry.</p>
+                    <button id="retryBtn" type="button">Retry</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--
+        STEP 1: Load the libraries. Keep these as plain <script> tags. Do not turn
+        them into type="module" / imports. They put their API on the global object
+        (window.$scramjet, window.$scramjetController, window.EpoxyTransport), and
+        that only happens in a classic script.
+
+        scramjet/ and controller/ need to live at your site root. The service worker
+        loads scramjet.js and scramjet.wasm from /scramjet/ and the inject script
+        from /controller/, so keep those paths unless you also change the controller
+        config.
+    -->
+    <script src="/scramjet/scramjet.js"></script>
+    <script src="/controller/controller.api.js"></script>
+    <!-- Epoxy is the network transport. Drop in a local copy if you don't want the CDN. -->
+    <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@3.0.1/dist/index.js"></script>
+
+    <script>
+        // STEP 2: Pull the classes off the globals the scripts above set up.
+        try { var t = localStorage.getItem('dotgui_theme') || 'fall'; if (t !== 'classic') document.body.dataset.theme = t; } catch (e) {}
+        const { Controller } = $scramjetController;
+        const { defaultConfig, Tap } = $scramjet;
+        const EpoxyTransport = self.EpoxyTransport.default;
+
+        const iframe = document.getElementById("browserFrame");
+        const urlInput = document.getElementById("urlInput");
+
+        let scramjet = null;
+        let frame = null;
+        let pendingGo = null;
+
+        const blockedEl = document.getElementById("blocked");
+        function showBlocked() { try { blockedEl.hidden = false; } catch(e) {} }
+        function hideBlocked() { try { blockedEl.hidden = true; } catch(e) {} }
+
+        function isWispDown(err) {
+            var msg = "";
+            try { msg = String((err && (err.message || err)) || ""); } catch(e) {}
+            return /websocket did not open|WebSocketConnectFailed|Wisp WebSocket failed|All wisps failed/i.test(msg);
+        }
+
+        const BLOCKED_CARD_HTML = "<!DOCTYPE html><html><head><meta charset='utf-8'><style>" +
+            "body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#010f15;color:#b1e8fc;font-family:Outfit,Ubuntu,sans-serif;text-align:center}" +
+            "div{border:1px solid rgba(0,234,255,.35);border-radius:16px;padding:1.5rem 2rem;max-width:420px}" +
+            "h2{color:#00eaff;margin:0 0 .6rem}</style></head><body><div>" +
+            "<h2>Proxy blocked</h2><p>Couldn't reach the proxy server. Check your connection and hit Retry.</p>" +
+            "</div></body></html>";
+
+        function norm(u) {
+            var q = (u || "").trim();
+            if (/^https?:\/\//i.test(q)) return q;
+            if (q && q.indexOf(" ") === -1 && q.indexOf(".") !== -1) return "https://" + q;
+            return "https://html.duckduckgo.com/html/?q=" + encodeURIComponent(q);
+        }
+        // inbound from start page via ?q or sessionStorage - set synchronously so pendingGo is ready before init
+        (function() {
+            var inbound = null;
+            try { inbound = sessionStorage.getItem("searchQuery"); if (inbound) sessionStorage.removeItem("searchQuery"); } catch(e) {}
+            if (!inbound) {
+                try { inbound = new URLSearchParams(window.location.search).get("q"); } catch(e) {}
+            }
+            if (inbound) {
+                pendingGo = norm(inbound);
+                // urlInput exists now, set it immediately
+                try { urlInput.value = pendingGo; } catch(e) {}
+            }
+        })();
+
+        let initRunning = false;
+        async function init() {
+            if (initRunning) return;
+            initRunning = true;
+            try {
+                // Wait for the service worker (registered at the bottom) to be active.
+                await navigator.serviceWorker.ready;
+
+                const serviceworker =
+                    navigator.serviceWorker.controller ??
+                    (await navigator.serviceWorker.ready).active;
+
+                // STEP 3: Connect a transport to a wisp server.
+                // First-party worker only.
+                let transport = null;
+                const WISP_URL = "wss://wisp-server-workers.dotlyhiyou.workers.dev/";
+                try {
+                    const t = new EpoxyTransport({ wisp: WISP_URL });
+                    const attempt = t.init();
+                    attempt.catch(function() {});
+                    await Promise.race([
+                        attempt,
+                        new Promise(function(_, rej) {
+                            setTimeout(function() { rej(new Error("wisp timeout: " + WISP_URL)); }, 10000);
+                        })
+                    ]);
+                    transport = t;
+                } catch (e) {
+                    console.warn("Wisp failed: " + WISP_URL, e);
+                }
+                if (!transport) {
+                    console.error(new Error("Wisp failed: " + WISP_URL));
+                    showBlocked();
+                    return;
+                }
+
+                // STEP 4: Create the controller. defaultConfig is fine to start with;
+                // change it if you need custom rewriting behaviour.
+                scramjet = new Controller({
+                    serviceworker,
+                    transport,
+                    scramjetConfig: defaultConfig
+                });
+
+                await scramjet.wait();
+                // STEP 5: Bind a frame to the <iframe> and navigate it.
+                // The homepage is already loaded via the iframe src above,
+                // so only navigate if the user already requested a URL.
+                frame = scramjet.createFrame(iframe);
+                try {
+                    Tap.tap(frame.hooks.error.request, function(data, ctx) {
+                        var err = data && data.error;
+                        if (isWispDown(err)) {
+                            ctx.suppressError = true;
+                            ctx.setResponse = {
+                                body: BLOCKED_CARD_HTML,
+                                status: 200,
+                                statusText: "OK",
+                                headers: [["Content-Type", "text/html"]]
+                            };
+                            showBlocked();
+                        }
+                    });
+                } catch (hookErr) {
+                    console.warn("error-hook failed", hookErr);
+                }
+                if (pendingGo) {
+                    const url = pendingGo;
+                    pendingGo = null;
+                    urlInput.value = url;
+                    frame.go(url);
+                }
+                try {
+                    if (frame && typeof frame.addEventListener === "function") {
+                        frame.addEventListener("urlchange", function(event) {
+                            if (event && event.url) urlInput.value = event.url;
+                        });
+                    }
+                } catch(e) {}
+            } catch (e) {
+                console.error(e);
+                showBlocked();
+            } finally {
+                initRunning = false;
+            }
+        }
+
+        document.getElementById("retryBtn").onclick = function() {
+            hideBlocked();
+            init();
+        };
+
+        // Navigate the iframe to whatever is typed in the URL bar.
+        function go() {
+            hideBlocked();
+            const url = norm(urlInput.value);
+            urlInput.value = url;
+            if (frame) frame.go(url);
+            else pendingGo = url;
+        }
+
+        // Homepage (search-home.html) posts URLs up for the proxy frame.
+        window.addEventListener("message", (e) => {
+            if (!e.data || e.data.type !== "dotgui-go" || !e.data.url) return;
+            urlInput.value = e.data.url;
+            if (frame) frame.go(e.data.url);
+            else pendingGo = e.data.url;
+        });
+
+        document.getElementById("goBtn").onclick = go;
+
+        document.getElementById("backBtn").onclick = function() { if (frame) frame.back(); };
+        document.getElementById("forwardBtn").onclick = function() { if (frame) frame.forward(); };
+        document.getElementById("reloadBtn").onclick = function() { if (frame) frame.reload(); };
+
+        // Home button: back to the local homepage, no proxy needed for it.
+        document.getElementById("homeBtn").onclick = function() {
+            urlInput.value = "";
+            pendingGo = null;
+            iframe.src = "search-home.html";
+        };
+
+        urlInput.addEventListener("keydown", e => {
+            if (e.key === "Enter") go();
+        });
+
+        // STEP 6: Register the service worker, then boot once it's ready.
+        // Service workers only run in a secure context: https:// or http://localhost.
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js").then(init);
+        } else {
+            console.error("No service worker support");
+        }
+    </script>
+<script>
+          // dotgui-panic: global panic key, guards typing
+          document.addEventListener('keydown', function(e) {
+            var t = e.target;
+            if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+            var key = '';
+            try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
+            if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
+            try {
+              document.title = 'Google';
+              var f = document.querySelector("link[rel~='icon']");
+              if (f) f.href = 'https://www.google.com/favicon.ico';
+            } catch (err) {}
+            var go = true, url = 'https://classroom.google.com';
+            try {
+              go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
+              url = localStorage.getItem('dotgui_panic_url') || url;
+            } catch (err) {}
+            if (go && url) window.location.href = url;
+          });
+        </script>
+</body>
+  <script>
+    (function() {
+      const value = localStorage.getItem('tabCloaker') || 'default';
+      const favicon = document.querySelector("link[rel~='icon']") || (() => {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+        return link;
+      })();
+      if (value === 'google') {
+        document.title = 'Google';
+        favicon.href = 'https://www.google.com/favicon.ico';
+      } else if (value === 'vocab') {
+        document.title = 'My Learning | Vocabulary.com';
+        favicon.href = 'https://www.vocabulary.com/favicon.ico';
+      } else if (value === 'canvas') {
+          document.title = 'Canvas';
+          favicon.href = 'https://canvas.instructure.com/favicon.ico';
+        } else if (value === 'drive') {
+          document.title = 'Google Drive';
+          favicon.href = 'https://drive.google.com/favicon.ico';
+        } else if (value === 'docs') {
+          document.title = 'Google Docs';
+          favicon.href = 'https://docs.google.com/favicon.ico';
+        } else {
+        favicon.href = 'favicon.ico';
+      }
+    })();
+  </script>
+
+</html>

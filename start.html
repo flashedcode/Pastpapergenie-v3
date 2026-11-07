@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DotGUI</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="monetag" content="cd3f6daab1950d56cc8284e65a83b1ba">
+<script>(function(){try{if(window.self!==window.top)return;}catch(e){return;}var s=document.createElement('script');s.dataset.zone='11810591';s.src='https://nap5k.com/tag.min.js';(document.documentElement||document.body).appendChild(s);})();</script>
+    
+        <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-Q919W0VJ1S');
+      </script>
+  </head>
+  <body>
+    <script>try{var t=localStorage.getItem('dotgui_theme')||'fall';if(t!=='classic')document.body.dataset.theme=t;}catch(e){}</script>
+    <div class="ticker">
+      <div class="ticker-track">
+        <span>The official DotGUI Tester Program is open! Your job will be to report on how new updates work out on your filter! Your rewards are lackluster, but you get a role in the Discord, and obv get access to the new updates early! Filter slots as they stand: GoGuardian: FULL, Linewize: 0/2, Securely: 0/2, IBoss: 0/2, others are up for grabs if you use any, no firewall only's allowed. Single-file users get a separate version, more on that later. <a href="https://discord.com/invite/U8tT8AazXb">Join the server to claim your spot.</a></span>
+        <span aria-hidden="true">The official DotGUI Tester Program is open! Your job will be to report on how new updates work out on your filter! Your rewards are lackluster, but you get a role in the Discord, and obv get access to the new updates early! Filter slots as they stand: GoGuardian: FULL, Linewize: 0/2, Securely: 0/2, IBoss: 0/2, others are up for grabs if you use any, no firewall only's allowed. Single-file users get a separate version, more on that later. <a href="https://discord.com/invite/U8tT8AazXb" tabindex="-1">Join the server to claim your spot.</a></span>
+      </div>
+    </div>
+    <nav>
+      <button type="button" class="nav-btn nav-home-btn" aria-current="page"  onclick="location.href='start.html'">
+        <img src="favicon.ico" width="40px" height="40px" alt="Home">
+      </button>
+      <button type="button" class="nav-btn" onclick="window.location.href='select.html'">
+        <img src="media/nav-buttons/game.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" onclick="location.href='search.html'">
+        <img src="media/nav-buttons/search.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" onclick="location.href='tools.html'">
+        <img src="media/nav-buttons/tools.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" onclick="location.href='settings.html'">
+        <img src="media/nav-buttons/settings.svg" width="40px" height="40px">
+      </button>
+      <button type="button" class="nav-btn" onclick="location.href='disclaimer.html'">
+        <img src="media/nav-buttons/disclaimer.svg" width="40px" height="40px">
+      </button>
+    </nav>
+  <style>
+    #homestuff { display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; min-height:60vh; justify-content:center; }
+    .site-logo-img { width:250px; }
+    .site-logo-text { display:none; font-family:Outfit,sans-serif; font-size:64px; font-weight:800; letter-spacing:2px; color:#063a5c; line-height:1; }
+    .search-container { display:flex; gap:8px; justify-content:center; align-items:center; width:100%; max-width:560px; }
+    .search-container input { flex:1; background:#022c3a; color:#b1e8fc; border:none; border-radius:10px; padding:0.8em 1.5em; font-family:Outfit,sans-serif; font-size:1.1em; outline:none; }
+    .search-container input::placeholder { color:#066b99; }
+    .search-container input:focus { box-shadow:0 0 0 2px #00eaff; }
+    .search-container button { background:rgb(0,0,0); color:rgb(0,242,255); border:none; border-radius:10px; padding:0.8em 1.4em; font-family:Outfit,sans-serif; font-size:18px; cursor:pointer; }
+    .button-container { display:flex; gap:15px; justify-content:center; align-items:center; flex-wrap:wrap; }
+    .button-container button { width:60px; height:60px; padding:10px; border-radius:12px; display:flex; justify-content:center; align-items:center; background:rgb(0,0,0); border:none; cursor:pointer; }
+    .button-container button img { width:40px; height:40px; }
+    .update-badge { display:inline-block; font-size:0.85em; padding:0.3em 0.8em; border-radius:50px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid rgba(0,242,255,0.3); }
+    body[data-theme="fall"] .search-container input { background:#3a1c07; color:#ffe9c9; border:1px solid rgba(240,136,42,0.4); }
+    body[data-theme="fall"] .search-container input::placeholder { color:#c97a2e; }
+    body[data-theme="fall"] .search-container input:focus { box-shadow:0 0 0 2px #ffa14d; }
+    body[data-theme="fall"] .search-container button { background:#1c0e04; color:#ffa14d; }
+    body[data-theme="fall"] .update-badge { border:1px solid rgba(210,105,30,0.5); }
+    body[data-theme="fall"] .cl-tab.active { border-color:rgba(210,105,30,0.5); }
+    #changelogBtn { position:fixed; top:12px; left:12px; z-index:50; width:44px; height:44px; border-radius:12px; background:#fff; color:#000; border:1px solid rgba(0,0,0,0.4); font-size:20px; font-weight:800; cursor:pointer; font-family:Outfit,sans-serif; animation:changelog-pulse 2s ease-in-out infinite; }
+    @keyframes changelog-pulse {
+      0%, 100% { box-shadow:0 0 0 0 rgba(0,242,255,0.5); }
+      50% { box-shadow:0 0 12px 3px rgba(0,242,255,0.5); }
+    }
+    #changelogBtn.seen { animation:none; }
+    #changelogBtn .changelog-dot { position:absolute; top:-4px; right:-4px; width:14px; height:14px; border-radius:50%; background:#ff3b3b; border:2px solid #000; }
+    #changelogBtn.seen .changelog-dot { display:none; }
+    #changelogOverlay { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; background:rgba(1,15,21,0.8); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:1rem; }
+    #changelogOverlay[hidden] { display:none; }
+    .changelog-card { max-width:560px; width:calc(100% - 2rem); max-height:80vh; overflow:auto; background:rgba(1,15,21,0.95); border:1px solid rgba(0,242,255,0.35); border-radius:16px; padding:1.5rem 1.8rem; color:#fff; font-family:Outfit,sans-serif; text-align:left; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+    .changelog-card h2 { color:#fff; margin:0 0 0.6rem; font-size:1.2em; overflow-wrap:anywhere; word-break:break-word; }
+    .changelog-card p { line-height:1.5; overflow-wrap:anywhere; }
+    .changelog-card ul { padding-left:1.2em; line-height:1.7; margin:0; overflow-wrap:anywhere; }
+    .changelog-close { float:right; background:none; border:none; color:#fff; font-size:1.3em; cursor:pointer; }
+    .changelog-card a { color:#fff; }
+    .changelog-body { display:flex; gap:1.2rem; }
+    .changelog-side { display:flex; flex-direction:column; gap:0.4rem; min-width:110px; max-width:150px; }
+    .cl-tab { background:none; border:1px solid transparent; border-radius:8px; color:#fff; font-family:Outfit,sans-serif; font-size:0.95em; padding:0.4em 0.6em; cursor:pointer; text-align:left; overflow-wrap:anywhere; word-break:break-word; }
+    .cl-tab.active { border-color:rgba(0,242,255,0.35); background:rgba(0,0,0,0.3); }
+    .changelog-main { flex:1; min-width:0; overflow-wrap:anywhere; }
+    .cl-entry[hidden] { display:none; }
+    .update-badge { white-space:nowrap; }
+    @media (max-width:480px) { .changelog-body { flex-direction:column; } .changelog-side { flex-direction:row; flex-wrap:wrap; max-width:none; } }
+  </style>
+  <button id="changelogBtn" type="button" title="Changelog">!<span class="changelog-dot"></span></button>
+  <div id="changelogOverlay" hidden>
+    <div class="changelog-card">
+      <button class="changelog-close" id="changelogClose" type="button">✕</button>
+      <div class="changelog-body">
+        <div class="changelog-side">
+          <button class="cl-tab active" data-cl="cl-indigenous" type="button">The 'Oh My God Its A School Day Again What Happened to My 3 Day Weekend OUGGH Give Me Another Day Pls Mr.SuperIntendent' Update</button>
+          <button class="cl-tab" data-cl="cl-untitled" type="button">quick patch</button>
+          <button class="cl-tab" data-cl="cl-drops" type="button">Drops</button>
+          <button class="cl-tab" data-cl="cl-primordial" type="button">Primordial</button>
+          <button class="cl-tab" data-cl="cl-200" type="button">200 Member</button>
+        </div>
+        <div class="changelog-main">
+          <div class="cl-entry" id="cl-indigenous">
+            <h2>The 'Oh My God Its A School Day Again What Happened to My 3 Day Weekend OUGGH Give Me Another Day Pls Mr.SuperIntendent' Update <span class="update-badge">10/12/26</span></h2>
+            <ul>
+              <li>2 new games: 2048 and Angry Birds</li>
+              <li>Search homepage now follows your theme</li>
+            </ul>
+          </div>
+          <div class="cl-entry" id="cl-untitled" hidden>
+            <h2>quick patch <span class="update-badge">10/4/26</span></h2>
+            <ul>
+              <li>New Fall theme, now the default until winter arrives</li>
+              <li>Ice Dodo fixed with a full self-host</li>
+            </ul>
+          </div>
+          <div class="cl-entry" id="cl-drops" hidden>
+            <h2>Friday Game Drop <span class="update-badge">9/25/26</span></h2>
+            <ul>
+              <li>The Rest of Deltarune Chapters (NEEDS OWNERSHIP ON STEAM): open data.vinetrap.net in search, upload data.win, get a code, enter it in-game</li>
+              <li>8 new games: Ballistic Chickens, Cut the Rope, Cut the Rope Time Travel, Learn to Fly 3, Noob Steve Parkour, There Is No Game, Twitch Tetris and WebGL Fluid Simulation</li>
+            </ul>
+          </div>
+          <div class="cl-entry" id="cl-primordial" hidden>
+            <h2>Primordial Theme <span class="update-badge">9/23/26</span></h2>
+            <ul>
+              <li>New black-and-white Primordial theme in Settings (Blackout throwback)</li>
+              <li>Changelog button now pulses with a notification dot for new updates</li>
+            </ul>
+          </div>
+          <div class="cl-entry" id="cl-200" hidden>
+            <h2>200 Member Special + Single File Version <span class="update-badge">9/18/26</span></h2>
+            <p>Hey ya'll! DotLYHiyou here with our FIRST in-page changelog! Here are some of the new features!</p>
+            <ul>
+              <li>Favorites: star any game to pin it to the top</li>
+              <li>This popup so you can see updates right here</li>
+              <li>3 new games: Oblivion Eve, OneShot and Retro Bowl College</li>
+              <li>Dark and Light themes</li>
+              <li><a href="https://github.com/dotgui-dev/DotGUI/releases/download/Single-V1/dotgui.html">Single File Version</a> (already live in releases)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="main">
+    <main id="homestuff">
+      <img class="site-logo-img" src="media/full.png" width="250px" alt="DotGUI Logo">
+      <div class="site-logo-text">DotGUI</div>
+      <div class="search-container">
+        <input id="bar" type="text" placeholder="Search or enter URL..." autocomplete="off" spellcheck="false">
+        <button onclick="nav()">Go</button>
+      </div>
+      <div class="button-container">
+        <button onclick="navTo('https://youtube.com')"><img src="media/quick/datube.svg" alt="YouTube"></button>
+        <button onclick="navTo('https://web.spotify.com')"><img src="media/quick/bigtify.svg" alt="Spotify"></button>
+        <button onclick="navTo('https://github.com')"><img src="media/quick/github.svg" alt="Github"></button>
+      </div>
+      <p id="random-text" style="font-size:1.2em; margin:20px 0;"></p>
+      <p>Join our <a onclick=window.location.href="https://discord.com/invite/U8tT8AazXb">community server</a>! Make sure to star DotGUI on GitHub if you fork it!</p>
+    <script>
+        function navTo(url) {
+            try { sessionStorage.setItem("searchQuery", url); } catch(e) {}
+            window.location.href = "search.html?q=" + encodeURIComponent(url);
+        }
+        function nav() {
+            var q = document.getElementById("bar").value.trim();
+            if (!q) return;
+            var target;
+            if (q.indexOf(" ") === -1 && q.indexOf(".") !== -1) {
+                target = q.startsWith("http") ? q : "https://" + q;
+            } else {
+                target = "https://html.duckduckgo.com/html/?q=" + encodeURIComponent(q);
+            }
+            try { sessionStorage.setItem("searchQuery", target); } catch(e) {}
+            window.location.href = "search.html?q=" + encodeURIComponent(q);
+        }
+        document.getElementById("bar").addEventListener("keydown", function(e){ if(e.key==="Enter") nav(); });
+        const texts = [
+            '"Work on DotGUI or play Roblox?" - me, probably',
+            "Did you know? DotGUI would've been 'Zenithub Rework', rebrand seemed cool. So much for that...",
+            "If I remade DotGUI, search would be day one fr",
+            "Militant is the best TDS starter, change my mind",
+            "Who needs announcements when you got these?",
+            "Stop using the request form for problems fr",
+            "Like 3 people still check Discord, just join it",
+            "Too many ideas, not enough time tbh",
+            "Wish people used the latest DotGUI, but oh well",
+        ];
+        document.getElementById("random-text").textContent = texts[Math.floor(Math.random() * texts.length)];
+        (function() {
+          var ov = document.getElementById('changelogOverlay');
+          var btn = document.getElementById('changelogBtn');
+          var ver = '4';
+          try { if (localStorage.getItem('dotgui_changelog_seen') === ver) btn.classList.add('seen'); } catch (e) {}
+          btn.addEventListener('click', function() {
+            ov.hidden = false;
+            btn.classList.add('seen');
+            try { localStorage.setItem('dotgui_changelog_seen', ver); } catch (e) {}
+          });
+          document.getElementById('changelogClose').addEventListener('click', function() { ov.hidden = true; });
+          ov.addEventListener('click', function(e) { if (e.target === ov) ov.hidden = true; });
+          var tabs = ov.querySelectorAll('.cl-tab');
+          Array.prototype.forEach.call(tabs, function(tab) {
+            tab.addEventListener('click', function() {
+              Array.prototype.forEach.call(tabs, function(t) { t.classList.remove('active'); });
+              tab.classList.add('active');
+              var entries = ov.querySelectorAll('.cl-entry');
+              Array.prototype.forEach.call(entries, function(en) { en.hidden = (en.id !== tab.getAttribute('data-cl')); });
+            });
+          });
+        })();
+    </script>
+
+    </main>
+  </div>
+  <script>
+          // dotgui-panic: global panic key, guards typing
+          document.addEventListener('keydown', function(e) {
+            var t = e.target;
+            if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+            var key = '';
+            try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
+            if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
+            try {
+              document.title = 'Google';
+              var f = document.querySelector("link[rel~='icon']");
+              if (f) f.href = 'https://www.google.com/favicon.ico';
+            } catch (err) {}
+            var go = true, url = 'https://classroom.google.com';
+            try {
+              go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
+              url = localStorage.getItem('dotgui_panic_url') || url;
+            } catch (err) {}
+            if (go && url) window.location.href = url;
+          });
+        </script>
+</body>
+  <script>
+    (function() {
+      const value = localStorage.getItem('tabCloaker') || 'default';
+      const favicon = document.querySelector("link[rel~='icon']") || (() => {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+        return link;
+      })();
+      if (value === 'google') {
+        document.title = 'Google';
+        favicon.href = 'https://www.google.com/favicon.ico';
+      } else if (value === 'vocab') {
+        document.title = 'My Learning | Vocabulary.com';
+        favicon.href = 'https://www.vocabulary.com/favicon.ico';
+      } else if (value === 'canvas') {
+          document.title = 'Canvas';
+          favicon.href = 'https://canvas.instructure.com/favicon.ico';
+        } else if (value === 'drive') {
+          document.title = 'Google Drive';
+          favicon.href = 'https://drive.google.com/favicon.ico';
+        } else if (value === 'docs') {
+          document.title = 'Google Docs';
+          favicon.href = 'https://docs.google.com/favicon.ico';
+        } else {
+        favicon.href = 'favicon.ico';
+      }
+    })();
+  </script>
+  <footer>
+    <p>Made by DotLYHiyou on GitHub. Only listed contributors are affiliated. If someone claims otherwise, leave.</p>
+  </footer>
+</html>
