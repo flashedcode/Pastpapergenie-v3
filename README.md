@@ -1,48 +1,114 @@
-<p align="center">
-  <img src="media/full.png" alt="DotGUI Logo" width="300"/>
-</p>
-
-<p align="center">A game site with 112 games and a proxied search, made for school users.
-Formerly Zenithub, prior BlackoutGames.</p>
-
-<p align="center">Join the <a href="https://discord.gg/U8tT8AazXb">Discord server</a> for official links, update news, and support. The Tester Program is out: one slot per filter stack, Tester role plus changelog credit plus early update access, new testers picked every month, and slots are evaporating fast.</p>
+<h1 align="center">Pastpapergenie</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/games-112-orange?style=flat-square" alt="112 games"/>
-  <img src="https://img.shields.io/badge/proxy-Scramjet-blue?style=flat-square" alt="Scramjet"/>
+  A UBG project built to be clean, simple, and easy to use. With over 700 games sourced from multiple stores, 40 apps, a fast and proxied browser, extensive customization options, and much more, this is easily one of the best unblocked websites with frutiger aero retro type theme.
 </p>
 
-# Features
+ 
+<p align="center">Sponsor my project!</p>
 
-- 112 games and 2 tools
-- Proxied search powered by Scramjet
-- Themes: Classic, Dark, Light, Primordial
-  - Fall (Seasonal)
-- Favorites and recent games
+  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O4O12A63EY)
 
-# Use instructions
+<hr>
 
-Play through the Discord server links, or self-host your own copy.
-Deploy anywhere static with one click:
+## Roadmap
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdotgui-dev%2FDotGUI)
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/dotgui-dev/DotGUI)
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/dotgui-dev/DotGUI)
+* [x] Games
+* [x] Apps (not many tho)
+* [x] Proxy
+* [x] Anime
+* [ ] Music
+* [ ] Movies
+* [ ] Chatroom (not yet)
 
-Single-file build: grab [dotgui.html](https://github.com/dotgui-dev/DotGUI/releases/download/Single-V1/dotgui.html) from [Single-V1](https://github.com/dotgui-dev/DotGUI/releases/tag/Single-V1), download and double-click, no hosting needed.
+## Deployment
 
-Codespaces: fork the repo, open a Codespace, then `npm install` and `npx servor`.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fflashedcode%2Fpastpapergenie-v3)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/flashedcode/pastpapergenie-v3)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/flashedcode/pastpapergenie-v3)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?referralCode=pastpapergenie&optionalCode=&api_key=&repository=https://github.com/flashedcode/pastpapergenie-v3)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/flashedcode/pastpapergenie-v3)
 
-# Copyright and takedowns
 
-We do not own any of the games or tools hosted here. Most were added by request. If you own something on this site and want it removed, open an issue with proof of ownership and it will be taken down. (Not legal advice, just our policy.)
+pastpapergenie is deployable to remotely any hosting service, and even locally deployable. it is also fast and easy to deploy as its mostly static except for the proxied browser
 
-# Old versions
+Follow the steps below to deploy.
 
-- [Old Versions](https://github.com/dotgui-dev/DotGUI/releases/tag/Old-Versions): retired releases, consolidated in one place.
 
-# Credits
 
-- Game rights holders, via the takedown process above.
-- Mercury Workshop for Scramjet.
-- Game sources: UGS (main games), GN-Math (exotic games), plus individual request sources.
+### Method 2: Deploying Locally
+
+Clone the repository:
+
+```sh
+git clone https://github.com/flashedcode/pastpapergenie-v3/edit
+```
+
+Enter the directory:
+
+```sh
+cd pastpapergenie-v3
+```
+
+Run a local development server:
+
+```sh
+python3 -m http.server        # simple Python HTTP server
+netlify dev                   # emulate a Netlify production environment
+```
+
+### Method 3: Deploying to Firebase
+
+Ensure you have a Firebase account and a project ready.
+
+Install the Firebase CLI:
+
+```sh
+npm i -g firebase-tools
+```
+
+Initialize a hosting project:
+
+```sh
+firebase init hosting
+```
+
+Follow the CLI steps, then deploy.
+
+---
+
+## If You Fork This Project
+
+Please consider starring the repository.
+
+You must **not**:
+
+* Modify the AGPL license
+* Claim this code as your own
+* Fail to provide proper credit
+* Use this code in your website without attribution
+* Detach from the fork network without giving credit
+* Violate the license in any way
+* Steal the code or redistribute it without acknowledgment
+
+You *may*:
+
+* Deploy it without any modifications
+* Deploy it with modifications (as long as credit and a changelog are included)
+* Perform other allowed actions as defined by the license
+
+To remain compliant, it is recommended that you include a notice like this:
+
+---
+
+## FORK NOTICE
+
+This repository was derived from [flashedcode/pastpapergenie-v3](https://github.com/flashedcode/pastpapergenie-v3). 
+The following changes have been made to this fork:
+
+* Change 1
+* Change 2
+* Change 3
+
+---
+ 
