@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chat - pastpapergenie v3</title>
+<link rel="icon" href="favicon.ico" />
+<link rel="stylesheet" href="styles.css" />
+<script src="theme.js"></script>
+<style>
+#auth{display:flex;flex:1;align-items:center;justify-content:center;padding:16px;background:var(--page)}
+.card{width:100%;max-width:340px;padding:0 12px 6px;border:1px solid var(--line);background:var(--panel);border-radius:var(--r);overflow:hidden}
+.card h1,aside h2{margin:0 -12px 8px;padding:4px 12px;font:bold 13px var(--font);color:#fff;background:linear-gradient(var(--bar1),var(--bar2));text-shadow:0 1px 1px rgba(0,0,0,.45)}
+aside h2{margin:0 0 4px;padding:4px 10px}
+.card label{display:block;margin:8px 0 2px}
+input{font:inherit;padding:3px 6px;border:1px solid var(--bline);border-radius:var(--r);background:#fff;color:#111}
+.card input{width:100%}
+.note{margin:4px 0;color:var(--muted);font-size:12px}
+.err{min-height:1.5em;margin:6px 0;color:#d03b3b}
+#chat{position:relative;display:flex;flex:1;min-height:0;background:var(--page)}
+aside{flex:none;width:190px;overflow-y:auto;padding-bottom:8px;background:var(--panel)}
+#rooms{border-right:1px solid var(--line)}#members{border-left:1px solid var(--line)}
+.item{display:block;width:100%;padding:3px 10px;text-align:left;color:var(--ink);background:none;border:0;border-radius:0;box-shadow:none}
+.item.on{color:#fff;font-weight:bold;background:linear-gradient(var(--bar1),var(--bar2))}
+.m{display:flex;gap:6px;align-items:center;padding:2px 10px}.m.off{opacity:.55}
+.dot{width:10px;height:10px;flex:none;border-radius:50%}
+#center{display:flex;flex:1;flex-direction:column;min-width:0}
+#top,#send{display:flex;gap:8px;align-items:center;padding:6px 10px;background:var(--panel)}
+#top{border-bottom:1px solid var(--line)}#send{border-top:1px solid var(--line)}
+#top .sp{flex:1}#status{color:var(--muted);font-size:12px}
+#log{flex:1;overflow-y:auto;padding:8px 12px}
+.msg{display:flex;gap:8px;margin:0 0 8px}
+.av{display:flex;flex:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;color:#fff;font-weight:bold;text-shadow:0 1px 1px rgba(0,0,0,.4)}
+.who{font-weight:bold}.ts{margin-left:6px;color:var(--muted);font-size:11px}
+.body{overflow-wrap:anywhere;white-space:pre-wrap}
+.x{display:none;margin-left:6px;padding:0 5px;font-size:11px}.msg:hover .x{display:inline-block}
+#typing{min-height:20px;padding:0 12px;color:var(--muted);font-size:12px}
+#text{flex:1}#membtn{display:none}
+@media(max-width:720px){aside{width:120px}#members{display:none;position:absolute;top:0;right:0;bottom:0;z-index:3;width:170px;box-shadow:-2px 0 8px rgba(0,0,0,.25)}#members.show{display:block}#membtn{display:inline-block}}
+</style>
+</head>
+<body class="app">
+<div id="page">
+<nav>
+<a href="start.html">Home</a>
+<a href="select.html">Games</a>
+<a href="anime.html">Anime</a>
+<a href="movies.html">Movies/Series</a>
+<a href="search.html">Search</a>
+<a href="chat.html" class="start" aria-current="page">Chat</a>
+<a href="tools.html">Tools</a>
+<a href="settings.html">Settings</a>
+<a href="about-us.html">About us</a>
+</nav>
+
+<div id="auth" hidden>
+  <form id="authform" class="card">
+    <h1 id="atitle">Log in</h1>
+    <label for="u">Username</label><input id="u" maxlength="20" autocomplete="username" required>
+    <label for="p">Password</label><input id="p" type="password" maxlength="128" autocomplete="current-password" required>
+    <div id="erow" hidden>
+      <label for="e">Email (optional)</label><input id="e" type="email" maxlength="254" autocomplete="email">
+      <p class="note">Never shown to other users. Without one, a lost password can't be recovered.</p>
+    </div>
+    <p id="err" class="err"></p>
+    <p><button class="go" id="asubmit">Log in</button> <a href="#" id="swap">Create an account</a></p>
+  </form>
+</div>
+
+<div id="chat" hidden>
+  <aside id="rooms"></aside>
+  <section id="center">
+    <div id="top">
+      <strong id="rname"></strong><span id="status"></span><span class="sp"></span>
+      <label for="color">Colour</label><select id="color"></select>
+      <button id="membtn" type="button">Members</button><button id="out" type="button">Log out</button>
+    </div>
+    <div id="log"></div>
+    <div id="typing"></div>
+    <form id="send"><input id="text" maxlength="500" placeholder="Message" autocomplete="off"><button class="go">Send</button></form>
+  </section>
+  <aside id="members"></aside>
+</div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const h = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const NAMES = ['Blue', 'Pink', 'Green', 'Gold', 'Purple', 'Teal', 'Orange', 'Red']; // same order as COLORS in src/index.js
+let me, ws, room = 'general', typers = {}, retry = 0, mode = 'login', lastTyping = 0;
+
+const api = async (p, body) => {
+  const r = await fetch('/api/' + p, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : undefined);
+  return { ok: r.ok, ...(await r.json().catch(() => ({}))) };
+};
+const send = o => ws && ws.readyState === 1 && ws.send(JSON.stringify(o));
+const setStatus = t => { $('#status').textContent = t; };
+
+async function boot() {
+  const r = await api('me');
+  if (!r.ok) { $('#auth').hidden = false; return; }
+  me = r.user;
+  $('#auth').hidden = true; $('#chat').hidden = false;
+  $('#rooms').replaceChildren(h('h2', '', 'Rooms'), ...r.rooms.map(n => {
+    const b = h('button', 'item', '# ' + n); b.dataset.room = n; b.onclick = () => goRoom(n); return b;
+  }));
+  $('#color').replaceChildren(...r.colors.map((c, i) => { const o = h('option', '', NAMES[i] || c); o.value = c; return o; }));
+  $('#color').value = me.color;
+  goRoom(room); connect();
+}
+
+function goRoom(n) {
+  room = n; typers = {};
+  $('#log').replaceChildren(); $('#typing').textContent = ''; $('#rname').textContent = '# ' + n;
+  document.querySelectorAll('.item').forEach(b => b.classList.toggle('on', b.dataset.room === n));
+  send({ t: 'join', room: n });
+}
+
+function connect() {
+  ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/api/ws');
+  ws.onopen = () => { retry = 0; setStatus(''); send({ t: 'join', room }); };
+  ws.onmessage = e => { if (e.data !== 'pong') on(JSON.parse(e.data)); };
+  ws.onclose = async () => {
+    setStatus('Reconnecting…');
+    if (!(await api('me').catch(() => ({ ok: true }))).ok) return location.reload();
+    setTimeout(connect, Math.min(10000, 1000 * ++retry));
+  };
+}
+setInterval(() => ws && ws.readyState === 1 && ws.send('ping'), 30000);
+
+function on(m) {
+  if (m.t === 'history' && m.room === room) {
+    $('#log').replaceChildren(); m.msgs.forEach(add); $('#log').scrollTop = 1e9;
+  } else if (m.t === 'msg' && m.room === room) add(m.m);
+  else if (m.t === 'del') document.querySelector('[data-id="' + m.id + '"]')?.remove();
+  else if (m.t === 'typing' && m.room === room && m.name !== me.name) typers[m.name] = Date.now();
+  else if (m.t === 'members') renderMembers(m);
+  else if (m.t === 'err') { setStatus(m.text); setTimeout(() => setStatus(''), 2000); }
+}
+
+function add(m) {
+  const d = h('div', 'msg'), col = h('div'), head = h('div'), av = h('div', 'av', m.name[0].toUpperCase());
+  d.dataset.id = m.id; av.style.background = m.color;
+  head.append(h('span', 'who', m.name), h('span', 'ts', new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })));
+  if (m.uid === me.id || me.admin) {
+    const x = h('button', 'x', '✕'); x.title = 'Delete'; x.onclick = () => send({ t: 'del', id: m.id }); head.append(x);
+  }
+  col.append(head, h('div', 'body', m.text)); d.append(av, col);
+  const L = $('#log'), stick = L.scrollTop + L.clientHeight >= L.scrollHeight - 40;
+  L.append(d); if (stick) L.scrollTop = L.scrollHeight;
+}
+
+function renderMembers(m) {
+  const box = $('#members'); box.replaceChildren();
+  for (const [label, list, off] of [['Online', m.online, 0], ['Offline', m.offline, 1]]) {
+    box.append(h('h2', '', label + ' — ' + list.length));
+    for (const u of list) {
+      const r = h('div', 'm' + (off ? ' off' : '')), d = h('span', 'dot');
+      d.style.background = u.color; r.append(d, h('span', '', u.name + (u.admin ? ' ★' : ''))); box.append(r);
+    }
+  }
+}
+
+function renderTyping() {
+  const n = Object.keys(typers).filter(k => Date.now() - typers[k] < 4000);
+  $('#typing').textContent = !n.length ? '' : n.length > 2 ? 'Several people are typing…' : n.join(' and ') + (n.length > 1 ? ' are' : ' is') + ' typing…';
+}
+setInterval(renderTyping, 1000);
+
+$('#send').onsubmit = e => {
+  e.preventDefault();
+  const t = $('#text').value.trim();
+  if (t) { send({ t: 'msg', text: t }); $('#text').value = ''; }
+};
+$('#text').oninput = () => { if (Date.now() - lastTyping > 2000) { lastTyping = Date.now(); send({ t: 'typing' }); } };
+$('#color').onchange = async e => { await api('color', { color: e.target.value }); me.color = e.target.value; };
+$('#out').onclick = () => api('logout', {}).then(() => location.reload());
+$('#membtn').onclick = () => $('#members').classList.toggle('show');
+
+$('#swap').onclick = e => {
+  e.preventDefault();
+  mode = mode === 'login' ? 'register' : 'login';
+  const r = mode === 'register';
+  $('#atitle').textContent = $('#asubmit').textContent = r ? 'Create account' : 'Log in';
+  $('#swap').textContent = r ? 'I already have an account' : 'Create an account';
+  $('#erow').hidden = !r; $('#p').autocomplete = r ? 'new-password' : 'current-password'; $('#err').textContent = '';
+};
+$('#authform').onsubmit = async e => {
+  e.preventDefault();
+  const body = { username: $('#u').value, password: $('#p').value };
+  if (mode === 'register') body.email = $('#e').value;
+  const r = await api(mode, body);
+  if (r.ok) boot(); else $('#err').textContent = r.error || 'Something went wrong. Try again.';
+};
+boot();
+
+// Same tab cloak + panic key as the other pages
+(function () {
+  var V = { google: ['Google', 'https://www.google.com/favicon.ico'], vocab: ['My Learning | Vocabulary.com', 'https://www.vocabulary.com/favicon.ico'], canvas: ['Canvas', 'https://canvas.instructure.com/favicon.ico'], drive: ['Google Drive', 'https://drive.google.com/favicon.ico'], docs: ['Google Docs', 'https://docs.google.com/favicon.ico'] }, v;
+  try { v = V[localStorage.getItem('tabCloaker')]; } catch (e) {}
+  if (v) { document.title = v[0]; document.querySelector("link[rel~='icon']").href = v[1]; }
+})();
+document.addEventListener('keydown', function (e) {
+  var t = e.target;
+  if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return;
+  var k = 'k', go = true, u = 'https://classroom.google.com';
+  try { k = localStorage.getItem('dotgui_panic_key') || k; go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true'; u = localStorage.getItem('dotgui_panic_url') || u; } catch (x) {}
+  if ((e.key || '').toLowerCase() !== k.toLowerCase()) return;
+  document.title = 'Google';
+  var f = document.querySelector("link[rel~='icon']"); if (f) f.href = 'https://www.google.com/favicon.ico';
+  if (go) location.href = u;
+});
+</script>
+</body>
+</html>
