@@ -18,6 +18,7 @@
 * [x] Proxy
 * [x] Anime
 * [x] Movies
+* [x] Series
 * [ ] Chatroom
 * [ ] Music
 * [ ] Browser with extentions
