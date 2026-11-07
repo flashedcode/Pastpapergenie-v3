@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manga Reader - pastpapergenie v3</title>
+  <meta name="description" content="Read manga online in HD with search powered by MangaDex API on pastpapergenie v3.">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="theme.js"></script>
+  <style>
+    #manga-grid.grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .manga-card {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .manga-card:hover {
+      transform: translateY(-2px);
+      border-color: #0b4fb3;
+    }
+    .chapter-btn {
+      font-size: 11px;
+      padding: 4px 8px;
+      cursor: pointer;
+      background: #f4f7ec;
+      border: 1px solid #b4c0a2;
+      border-radius: 3px;
+    }
+    .chapter-btn:hover {
+      background: #dfe6d0;
+    }
+  </style>
+</head>
+<body>
+<div id="page">
+<header>
+<p class="logo"><a href="start.html">pastpapergenie <small>v3</small></a></p>
+<p class="blurb">Browser games and web search. follow @xrompf on tiktok</p>
+</header>
+<nav>
+<a href="start.html">Home</a>
+<a href="select.html">Games</a>
+<a href="cloudgames.html">Cloud Games</a>
+<a href="movies.html">Movies</a>
+<a href="anime.html">Anime</a>
+<a href="music.html">Music</a>
+<a href="manga.html" class="start" aria-current="page">Manga</a>
+<a href="search.html">Search</a>
+<a href="tools.html">Tools</a>
+<a href="settings.html">Settings</a>
+<a href="about-us.html">About</a>
+</nav>
+
+<div id="games">
+<main>
+  <!-- Search & Catalog Window -->
+  <div id="browser-win" class="win">
+    <h2>Manga Browser & Reader</h2>
+    <div class="in">
+      <form id="maq-form" class="row" onsubmit="handleMangaSearch(event)">
+        <input id="maq" type="search" placeholder="Search manga e.g. One Piece, Chainsaw Man, Naruto, Solo Leveling..." aria-label="Search manga" style="flex:1"> 
+        <button class="go" type="submit">Search</button>
+      </form>
+      <div id="manga-grid" class="grid">Loading popular manga...</div>
+    </div>
+  </div>
+
+  <!-- Chapters Selection & Reader Window -->
+  <div id="reader-win" class="win" hidden>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <h2 id="reader-title" style="margin: 0;">Manga Details</h2>
+      <button type="button" onclick="closeReader()">&larr; Back to Catalog</button>
+    </div>
+    
+    <div class="in">
+      <!-- Chapter List -->
+      <div id="chapter-selection" style="margin-bottom: 12px; padding: 10px; background: rgba(0,0,0,0.03); border: 1px solid #ccc;">
+        <strong style="font-size:12px; display:block; margin-bottom:6px;">AVAILABLE CHAPTERS:</strong>
+        <div id="chapter-list" style="display:flex; flex-wrap:wrap; gap:5px; max-height:160px; overflow-y:auto; background:#fff; padding:6px; border:1px solid #ddd;">
+          Loading chapters...
+        </div>
+      </div>
+
+      <!-- Scrollable Pages View -->
+      <div id="chapter-pages-wrap" style="text-align: center; background: #1a1a1a; padding: 10px; border-radius: 4px;">
+        <div id="chapter-pages" style="display: flex; flex-direction: column; align-items: center; gap: 8px; max-height: 75vh; overflow-y: auto;">
+          <p style="color: #fff; padding: 20px;">Select a chapter above to start reading.</p>
+        </div>
+      </div>
+
+      <div class="row" style="justify-content: flex-end; margin-top: 10px;">
+        <button type="button" onclick="closeReader()">Close Reader</button>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<footer>
+  <p>Manga reader powered by MangaDex API. License problem or takedown request: contact details are being set up and will be here soon.</p>
+</footer>
+</div>
+
+<script>
+  // Popular Manga Fallbacks with working covers and chapter access
+  const POPULAR_MANGA = [
+    { id: "a1c7c817-4e59-43b7-9365-09675a149a6f", title: "One Piece", cover: "https://uploads.mangadex.org/covers/a1c7c817-4e59-43b7-9365-09675a149a6f/7517336d-ddc5-43ea-882d-83fa6aa82414.jpg.256.jpg" },
+    { id: "e78a489b-6632-4d61-b069-52341f4b36a7", title: "Chainsaw Man", cover: "https://uploads.mangadex.org/covers/e78a489b-6632-4d61-b069-52341f4b36a7/f8c052cf-d434-4a25-a4ec-ca3794d0c9f8.jpg.256.jpg" },
+    { id: "c52b2ce3-7f95-469c-96b0-474fb724fb76", title: "Jujutsu Kaisen", cover: "https://uploads.mangadex.org/covers/c52b2ce3-7f95-469c-96b0-474fb724fb76/b04e6c38-ce99-4d8e-9069-b5413009772a.jpg.256.jpg" },
+    { id: "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0", title: "Solo Leveling", cover: "https://uploads.mangadex.org/covers/32d76d19-8a05-4db0-9fc2-e0b0648fe9d0/3947db5c-59eb-438d-8e42-706f9d2d8ce7.jpg.256.jpg" },
+    { id: "801513ba-a712-4985-8c30-c65e804e4f61", title: "Berserk", cover: "https://uploads.mangadex.org/covers/801513ba-a712-4985-8c30-c65e804e4f61/b21588d9-482d-4d76-9cf5-6de12bb943d2.jpg.256.jpg" },
+    { id: "6b1eb93e-473a-4ab3-9922-1a66d2a29a4a", title: "Naruto", cover: "https://uploads.mangadex.org/covers/6b1eb93e-473a-4ab3-9922-1a66d2a29a4a/1266cf9b-7da7-4e76-80f6-95ff062a4253.jpg.256.jpg" }
+  ];
+
+  let currentMangaId = null;
+
+  async function loadPopularManga() {
+    const grid = document.getElementById('manga-grid');
+    if (!grid) return;
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Loading popular manga...</div>';
+
+    try {
+      const res = await fetch('https://api.mangadex.org/manga?limit=24&includes[]=cover_art');
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        renderMangaCards(data.data, grid);
+      } else {
+        renderFallbackManga(grid);
+      }
+    } catch (e) {
+      renderFallbackManga(grid);
+    }
+  }
+
+  function renderFallbackManga(grid) {
+    grid.innerHTML = '';
+    POPULAR_MANGA.forEach(m => {
+      const card = document.createElement('div');
+      card.className = 'manga-card';
+      card.onclick = () => openManga(m.id, m.title);
+      card.innerHTML = `
+        <img src="${m.cover}" alt="${m.title}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border:1px solid #ddd; margin-bottom:4px; border-radius:2px;" onerror="this.src='favicon.ico'">
+        <div>
+          <h3 style="font-size:12px; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${m.title}">${m.title}</h3>
+        </div>
+        <button type="button" style="margin-top:4px; width:100%; font-size:10px; padding:3px;">READ</button>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  async function handleMangaSearch(e) {
+    if (e) e.preventDefault();
+    const query = document.getElementById('maq').value.trim();
+    if (!query) { loadPopularManga(); return; }
+
+    const grid = document.getElementById('manga-grid');
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Searching MangaDex...</div>';
+
+    try {
+      const res = await fetch('https://api.mangadex.org/manga?title=' + encodeURIComponent(query) + '&limit=24&includes[]=cover_art');
+      const data = await res.json();
+      if (!data.data || data.data.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">No manga found for "' + query + '". Try another title.</div>';
+        return;
+      }
+      renderMangaCards(data.data, grid);
+    } catch (err) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Search failed. Try again.</div>';
+    }
+  }
+
+  function renderMangaCards(mangaList, grid) {
+    grid.innerHTML = '';
+    mangaList.forEach(manga => {
+      const title = manga.attributes?.title?.en || Object.values(manga.attributes?.title || {})[0] || 'Unknown Manga';
+      const coverRel = (manga.relationships || []).find(r => r.type === 'cover_art');
+      const coverFileName = coverRel?.attributes?.fileName;
+      const coverUrl = coverFileName 
+        ? 'https://uploads.mangadex.org/covers/' + manga.id + '/' + coverFileName + '.256.jpg'
+        : 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=200';
+
+      const card = document.createElement('div');
+      card.className = 'manga-card';
+      card.onclick = () => openManga(manga.id, title);
+      card.innerHTML = `
+        <img src="${coverUrl}" alt="${title}" style="width:100%; aspect-ratio:3/4; object-fit:cover; border:1px solid #ddd; margin-bottom:4px; border-radius:2px;" onerror="this.src='favicon.ico'">
+        <div>
+          <h3 style="font-size:12px; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${title}">${title}</h3>
+        </div>
+        <button type="button" style="margin-top:4px; width:100%; font-size:10px; padding:3px;">READ</button>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  async function openManga(id, title) {
+    currentMangaId = id;
+    document.getElementById('browser-win').style.display = 'none';
+    document.getElementById('reader-win').removeAttribute('hidden');
+    document.getElementById('reader-title').innerText = title;
+
+    const chapterList = document.getElementById('chapter-list');
+    chapterList.innerHTML = '<span style="font-size:11px;">Loading English chapters...</span>';
+
+    try {
+      const res = await fetch('https://api.mangadex.org/chapter?manga=' + id + '&translatedLanguage[]=en&limit=30&order[chapter]=desc');
+      const data = await res.json();
+      
+      if (!data.data || data.data.length === 0) {
+        chapterList.innerHTML = '<span style="font-size:11px; color:#666;">No English chapters listed on MangaDex. You can read online at MangaDex directly.</span>';
+        return;
+      }
+
+      chapterList.innerHTML = '';
+      data.data.forEach(ch => {
+        const num = ch.attributes.chapter || 'Extra';
+        const chTitle = ch.attributes.title || '';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chapter-btn';
+        btn.innerText = 'Ch. ' + num + (chTitle ? ' - ' + chTitle : '');
+        btn.onclick = () => loadChapterPages(ch.id, num);
+        chapterList.appendChild(btn);
+      });
+
+      // Auto-load first available chapter
+      loadChapterPages(data.data[0].id, data.data[0].attributes.chapter || '1');
+    } catch (e) {
+      chapterList.innerHTML = '<span style="font-size:11px; color:red;">Failed to load chapter list.</span>';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function loadChapterPages(chapterId, chNum) {
+    const pages = document.getElementById('chapter-pages');
+    pages.innerHTML = '<p style="color:#fff; padding:20px;">Loading Chapter ' + chNum + ' images...</p>';
+
+    try {
+      const res = await fetch('https://api.mangadex.org/at-home/server/' + chapterId);
+      const data = await res.json();
+      
+      if (!data.baseUrl || !data.chapter || !data.chapter.data) {
+        pages.innerHTML = '<p style="color:#fff; padding:20px;">This chapter is hosted on an external official publisher site (MangaPlus). Click to view manga details on MangaDex.</p>';
+        return;
+      }
+
+      const baseUrl = data.baseUrl;
+      const hash = data.chapter.hash;
+      const files = data.chapter.data;
+
+      pages.innerHTML = '';
+      files.forEach((f, idx) => {
+        const img = document.createElement('img');
+        img.src = baseUrl + '/data/' + hash + '/' + f;
+        img.alt = 'Page ' + (idx + 1);
+        img.style.cssText = 'max-width:100%; height:auto; display:block; border-radius:2px;';
+        pages.appendChild(img);
+      });
+    } catch (e) {
+      pages.innerHTML = '<p style="color:#fff; padding:20px;">Failed to load chapter images. Check your network connection.</p>';
+    }
+  }
+
+  function closeReader() {
+    document.getElementById('reader-win').setAttribute('hidden', '');
+    document.getElementById('browser-win').style.display = 'block';
+    document.getElementById('chapter-pages').innerHTML = '<p style="color:#fff; padding:20px;">Select a chapter above to start reading.</p>';
+  }
+
+  loadPopularManga();
+</script>
+</body>
+</html>
