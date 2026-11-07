@@ -1,0 +1,22 @@
+
+User-agent: *
+
+Disallow: /core/
+
+Disallow: /controller/
+
+Disallow: /scramjet/
+
+Disallow: /game-embeds/
+
+Disallow: /tool-embeds/
+
+Disallow: /pages/
+
+Disallow: /404.html
+
+Disallow: /launch.html
+
+Allow: /media/
+
+Sitemap: https://pastpapergenie.co.uk/sitemap.xml
