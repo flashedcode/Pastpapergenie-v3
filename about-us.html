@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>About Us- Pastpapergenie</title>
+    <title>About Us - pastpapergenie v3</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="monetag" content="cd3f6daab1950d56cc8284e65a83b1ba">
-    <script>(function(){try{if(window.self!==window.top)return;}catch(e){return;}var s=document.createElement('script');s.dataset.zone='11810591';s.src='https://nap5k.com/tag.min.js';(document.documentElement||document.body).appendChild(s);})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.ico" />
     <link rel="stylesheet" href="styles.css" />
     <script src="theme.js"></script>
-    <!-- Google analytics tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q919W0VJ1S"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -18,25 +16,24 @@
     </script>
   </head>
   <body>
-<div id="page">
-<header>
-<p class="logo"><a href="start.html">pastpapergenie <small>v3</small></a></p>
-<p class="blurb">Browser games and web search. follow @xrompf on tiktok</p>
-</header>
-<nav>
-<a href="start.html">Home</a>
-<a href="select.html">Games</a>
-<a href="movies.html">Movies/Series</a>
-<a href="anime.html">Anime</a>
-<a href="search.html">Search</a>
-<a href="chat.html">Chatrooms</a>
-<a href="tools.html">Tools</a>
-<a href="settings.html">Settings</a>
-<a href="about-us.html" class="start" aria-current="page">About</a>
-</nav>
+    <div id="page">
+      <header>
+        <p class="logo"><a href="start.html">pastpapergenie <small>v3</small></a></p>
+        <p class="blurb">Browser games and web search. follow @xrompf on tiktok</p>
+      </header>
+      <nav>
+        <a href="start.html">Home</a>
+        <a href="select.html">Games</a>
+        <a href="anime.html">Anime</a>
+        <a href="movies.html">Movies/Series</a>
+        <a href="chat.html">Chat</a>
+        <a href="search.html">Search</a>
+        <a href="tools.html">Tools</a>
+        <a href="ai.html">AI</a>
+        <a href="settings.html">Settings</a>
+        <a href="about-us.html" class="start" aria-current="page">About us</a>
+      </nav>
 
-    <div id="games">
-      <div>
       <main>
         <h1>About</h1>
         <p>Hi, I'm xrompf (Ryan), the owner and maintainer of pastpapergenie and xrompf-dots.</p>
@@ -44,62 +41,71 @@
         <p>Since then it has gotten much bigger. Now you can play hundreds of actual good games like Terraria, Minecraft 1.26 and even Call of Duty. There are also 26,000+ anime, a website unblocker and customisable themes.</p>
         <p>So to everyone who has supported this project:</p>
         <h2>Thank you!</h2>
-       </div>
-        <iframe id="kofiframe" src="https://ko-fi.com/xrompf/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true" style="border:none;width:100%;max-width:100%;padding:4px;background:#f9f9f9;" height="712" loading="lazy" title="xrompf on Ko-fi"></iframe>
-       <div>
+
+        <!-- Fixed Ko-fi Support Card -->
+        <div class="setting-section" style="margin: 16px 0; text-align: center;">
+          <h2>Support pastpapergenie</h2>
+          <p class="desc">If pastpapergenie has helped you study or pass the time, consider leaving a small tip to keep the servers running.</p>
+          <p style="margin: 12px 0;">
+            <a href="https://ko-fi.com/xrompf" target="_blank" rel="noopener noreferrer" class="btn go" style="font-size:14px;padding:6px 18px;display:inline-block;text-decoration:none;">Support xrompf on Ko-fi</a>
+          </p>
+          <div style="margin-top:14px;display:flex;justify-content:center;">
+            <iframe id="kofiframe" src="https://ko-fi.com/xrompf/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true" style="border:none;width:100%;max-width:480px;height:650px;background:#f9f9f9;border-radius:var(--r);box-shadow:0 2px 8px rgba(0,0,0,0.1);" loading="lazy" title="xrompf on Ko-fi"></iframe>
+          </div>
+        </div>
+
         <h2>Disclaimer</h2>
         <p>I, xrompf, owner and sole maintainer of pastpapergenie, am not responsible for any trouble you get yourself into using my site.</p>
         <p>If you use it somewhere you should not, that choice is on you.</p>
+
         <h2>For teachers who caught their students</h2>
         <p>I am not in the wrong for making this site easily accessible.</p>
-        </div>
       </main>
+
+      <script>
+        // dotgui-panic: global panic key
+        document.addEventListener('keydown', function(e) {
+          var t = e.target;
+          if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+          var key = '';
+          try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
+          if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
+          try {
+            document.title = 'Google';
+            var f = document.querySelector("link[rel~='icon']");
+            if (f) f.href = 'https://www.google.com/favicon.ico';
+          } catch (err) {}
+          var go = true, url = 'https://classroom.google.com';
+          try {
+            go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
+            url = localStorage.getItem('dotgui_panic_url') || url;
+          } catch (err) {}
+          if (go && url) window.location.href = url;
+        });
+      </script>
+      <footer><p>Licence problem or takedown request: contact details are being set up and will be here soon.</p></footer>
     </div>
-<script>
-          // dotgui-panic: global panic key, guards typing
-          document.addEventListener('keydown', function(e) {
-            var t = e.target;
-            if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
-            var key = '';
-            try { key = localStorage.getItem('dotgui_panic_key') || 'k'; } catch (err) { key = 'k'; }
-            if ((e.key || '').toLowerCase() !== (key || '').toLowerCase() || !key) return;
-            try {
-              document.title = 'Google';
-              var f = document.querySelector("link[rel~='icon']");
-              if (f) f.href = 'https://www.google.com/favicon.ico';
-            } catch (err) {}
-            var go = true, url = 'https://classroom.google.com';
-            try {
-              go = (localStorage.getItem('dotgui_panic_redirect') || 'true') === 'true';
-              url = localStorage.getItem('dotgui_panic_url') || url;
-            } catch (err) {}
-            if (go && url) window.location.href = url;
-          });
-        </script>
-<footer><p>Licence problem or takedown request: contact details are being set up and will be here soon.</p></footer>
-</div>
-<script>
-    // Tab cloaker
-    (function() {
-      var value = 'default';
-      try { value = localStorage.getItem('tabCloaker') || 'default'; } catch (e) {}
-      var favicon = document.querySelector("link[rel~='icon']") || (function() {
-        var link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-        return link;
+    <script>
+      (function() {
+        var value = 'default';
+        try { value = localStorage.getItem('tabCloaker') || 'default'; } catch (e) {}
+        var favicon = document.querySelector("link[rel~='icon']") || (function() {
+          var link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+          return link;
+        })();
+        var CLOAKS = {
+          google: ['Google', 'https://www.google.com/favicon.ico'],
+          vocab: ['My Learning | Vocabulary.com', 'https://www.vocabulary.com/favicon.ico'],
+          canvas: ['Canvas', 'https://canvas.instructure.com/favicon.ico'],
+          drive: ['Google Drive', 'https://drive.google.com/favicon.ico'],
+          docs: ['Google Docs', 'https://docs.google.com/favicon.ico']
+        };
+        var c = CLOAKS[value];
+        if (c) { document.title = c[0]; favicon.href = c[1]; }
+        else { favicon.href = 'favicon.ico'; }
       })();
-      var CLOAKS = {
-        google: ['Google', 'https://www.google.com/favicon.ico'],
-        vocab: ['My Learning | Vocabulary.com', 'https://www.vocabulary.com/favicon.ico'],
-        canvas: ['Canvas', 'https://canvas.instructure.com/favicon.ico'],
-        drive: ['Google Drive', 'https://drive.google.com/favicon.ico'],
-        docs: ['Google Docs', 'https://docs.google.com/favicon.ico']
-      };
-      var c = CLOAKS[value];
-      if (c) { document.title = c[0]; favicon.href = c[1]; }
-      else { favicon.href = 'favicon.ico'; }
-    })();
-  </script>
-</body>
+    </script>
+  </body>
 </html>

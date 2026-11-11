@@ -20,11 +20,12 @@
 <nav>
 <a href="start.html">Home</a>
 <a href="select.html">Games</a>
-<a href="anime.html">Anime</a
+<a href="anime.html">Anime</a>
 <a href="movies.html">Movies/Series</a>
-<a href="search.html" class="start" aria-current="page">Search</a>
 <a href="chat.html">Chatrooms</a>
+<a href="search.html" class="start" aria-current="page">Search</a>
 <a href="tools.html">Tools</a>
+<a href="ai.html">AI</a>
 <a href="settings.html">Settings</a>
 <a href="about-us.html">About us</a>
 </nav>
@@ -52,50 +53,22 @@
         </div>
     </div>
     <!--
-        STEP 1: Load the libraries. Keep these as plain <script> tags. Do not turn
-        them into type="module" / imports. They put their API on the global object
-        (window.$scramjet, window.$scramjetController, window.EpoxyTransport), and
-        that only happens in a classic script.
-
-        scramjet/ and controller/ need to live at your site root. The service worker
-        loads scramjet.js and scramjet.wasm from /scramjet/ and the inject script
-        from /controller/, so keep those paths unless you also change the controller
-        config.
+        STEP 1: Load Ultraviolet, BareMux, and Epoxy transport scripts.
     -->
-    <script src="/scramjet/scramjet.js"></script>
-    <script src="/controller/controller.api.js"></script>
-    <!-- Epoxy is the network transport. Drop in a local copy if you don't want the CDN. -->
-    <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@3.0.1/dist/index.js"></script>
+    <script src="/baremux/index.js"></script>
+    <script src="/epoxy/index.js"></script>
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
 
     <script>
-        // STEP 2: Pull the classes off the globals the scripts above set up.
-        const { Controller } = $scramjetController;
-        const { defaultConfig, Tap } = $scramjet;
-        const EpoxyTransport = self.EpoxyTransport.default;
-
         const iframe = document.getElementById("browserFrame");
         const urlInput = document.getElementById("urlInput");
-
-        let scramjet = null;
-        let frame = null;
+        let bareMuxConn = null;
         let pendingGo = null;
 
         const blockedEl = document.getElementById("blocked");
         function showBlocked() { try { blockedEl.hidden = false; } catch(e) {} }
         function hideBlocked() { try { blockedEl.hidden = true; } catch(e) {} }
-
-        function isWispDown(err) {
-            var msg = "";
-            try { msg = String((err && (err.message || err)) || ""); } catch(e) {}
-            return /websocket did not open|WebSocketConnectFailed|Wisp WebSocket failed|All wisps failed/i.test(msg);
-        }
-
-        const BLOCKED_CARD_HTML = "<!DOCTYPE html><html><head><meta charset='utf-8'><style>" +
-            "body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f6fafd;color:#14263a;font-family:Tahoma,Verdana,sans-serif;text-align:center}" +
-            "div{border:1px solid #9db9d4;border-radius:16px;padding:1.5rem 2rem;max-width:420px}" +
-            "h2{color:#0b4fb3;margin:0 0 .6rem}</style></head><body><div>" +
-            "<h2>Proxy blocked</h2><p>Couldn't reach the proxy server. Check your connection and hit Retry.</p>" +
-            "</div></body></html>";
 
         function norm(u) {
             var q = (u || "").trim();
@@ -103,6 +76,7 @@
             if (q && q.indexOf(" ") === -1 && q.indexOf(".") !== -1) return "https://" + q;
             return "https://html.duckduckgo.com/html/?q=" + encodeURIComponent(q);
         }
+
         // inbound from start page via ?q or sessionStorage - set synchronously so pendingGo is ready before init
         (function() {
             var inbound = null;
@@ -112,7 +86,6 @@
             }
             if (inbound) {
                 pendingGo = norm(inbound);
-                // urlInput exists now, set it immediately
                 try { urlInput.value = pendingGo; } catch(e) {}
             }
         })();
@@ -122,115 +95,77 @@
             if (initRunning) return;
             initRunning = true;
             try {
-                // Wait for the service worker (registered at the bottom) to be active.
-                await navigator.serviceWorker.ready;
+                if ("serviceWorker" in navigator) {
+                    await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+                    await navigator.serviceWorker.ready;
+                }
 
-                const serviceworker =
-                    navigator.serviceWorker.controller ??
-                    (await navigator.serviceWorker.ready).active;
-
-                // STEP 3: Connect a transport to a wisp server.
-                // First-party worker only.
-                let transport = null;
+                bareMuxConn = new BareMux.BareMuxConnection("/baremux/worker.js");
                 const WISP_URL = "wss://wisp-server-workers.dotlyhiyou.workers.dev/";
+
                 try {
-                    const t = new EpoxyTransport({ wisp: WISP_URL });
-                    const attempt = t.init();
-                    attempt.catch(function() {});
-                    await Promise.race([
-                        attempt,
-                        new Promise(function(_, rej) {
-                            setTimeout(function() { rej(new Error("wisp timeout: " + WISP_URL)); }, 10000);
-                        })
-                    ]);
-                    transport = t;
-                } catch (e) {
-                    console.warn("Wisp failed: " + WISP_URL, e);
-                }
-                if (!transport) {
-                    console.error(new Error("Wisp failed: " + WISP_URL));
-                    showBlocked();
-                    return;
+                    await bareMuxConn.setTransport("/epoxy/index.mjs", [{ wisp: WISP_URL }]);
+                } catch(err) {
+                    console.warn("Failed to set transport on bare-mux:", err);
                 }
 
-                // STEP 4: Create the controller. defaultConfig is fine to start with;
-                // change it if you need custom rewriting behaviour.
-                scramjet = new Controller({
-                    serviceworker,
-                    transport,
-                    scramjetConfig: defaultConfig
-                });
-
-                await scramjet.wait();
-                // STEP 5: Bind a frame to the <iframe> and navigate it.
-                // The homepage is already loaded via the iframe src above,
-                // so only navigate if the user already requested a URL.
-                frame = scramjet.createFrame(iframe);
-                try {
-                    Tap.tap(frame.hooks.error.request, function(data, ctx) {
-                        var err = data && data.error;
-                        if (isWispDown(err)) {
-                            ctx.suppressError = true;
-                            ctx.setResponse = {
-                                body: BLOCKED_CARD_HTML,
-                                status: 200,
-                                statusText: "OK",
-                                headers: [["Content-Type", "text/html"]]
-                            };
-                            showBlocked();
-                        }
-                    });
-                } catch (hookErr) {
-                    console.warn("error-hook failed", hookErr);
-                }
                 if (pendingGo) {
-                    const url = pendingGo;
+                    const target = pendingGo;
                     pendingGo = null;
-                    urlInput.value = url;
-                    frame.go(url);
+                    navigateTo(target);
                 }
-                try {
-                    if (frame && typeof frame.addEventListener === "function") {
-                        frame.addEventListener("urlchange", function(event) {
-                            if (event && event.url) urlInput.value = event.url;
-                        });
-                    }
-                } catch(e) {}
             } catch (e) {
-                console.error(e);
+                console.error("Ultraviolet initialization error:", e);
                 showBlocked();
             } finally {
                 initRunning = false;
             }
         }
 
-        document.getElementById("retryBtn").onclick = function() {
+        function navigateTo(url) {
             hideBlocked();
-            init();
-        };
-
-        // Navigate the iframe to whatever is typed in the URL bar.
-        function go() {
-            hideBlocked();
-            const url = norm(urlInput.value);
-            urlInput.value = url;
-            if (frame) frame.go(url);
-            else pendingGo = url;
+            const cleanUrl = norm(url);
+            urlInput.value = cleanUrl;
+            if (typeof __uv$config !== "undefined" && __uv$config.encodeUrl) {
+                iframe.src = __uv$config.prefix + __uv$config.encodeUrl(cleanUrl);
+            } else {
+                iframe.src = "/service/" + encodeURIComponent(cleanUrl);
+            }
         }
+
+        function go() {
+            const url = urlInput.value.trim();
+            if (!url) return;
+            navigateTo(url);
+        }
+
+        iframe.addEventListener("load", function() {
+            try {
+                const loc = iframe.contentWindow.location;
+                if (loc.pathname && typeof __uv$config !== "undefined" && loc.pathname.startsWith(__uv$config.prefix)) {
+                    const raw = loc.pathname.slice(__uv$config.prefix.length) + loc.search + loc.hash;
+                    const decoded = __uv$config.decodeUrl(raw);
+                    if (decoded) urlInput.value = decoded;
+                }
+            } catch(e) {}
+        });
 
         // Homepage (search-home.html) posts URLs up for the proxy frame.
         window.addEventListener("message", (e) => {
             if (!e.data || e.data.type !== "dotgui-go" || !e.data.url) return;
-            urlInput.value = e.data.url;
-            if (frame) frame.go(e.data.url);
-            else pendingGo = e.data.url;
+            navigateTo(e.data.url);
         });
 
         document.getElementById("goBtn").onclick = go;
-
-        document.getElementById("backBtn").onclick = function() { if (frame) frame.back(); };
-        document.getElementById("forwardBtn").onclick = function() { if (frame) frame.forward(); };
-        document.getElementById("reloadBtn").onclick = function() { if (frame) frame.reload(); };
+        document.getElementById("backBtn").onclick = function() {
+            try { iframe.contentWindow.history.back(); } catch(e) {}
+        };
+        document.getElementById("forwardBtn").onclick = function() {
+            try { iframe.contentWindow.history.forward(); } catch(e) {}
+        };
+        document.getElementById("reloadBtn").onclick = function() {
+            try { iframe.contentWindow.location.reload(); } catch(e) { iframe.src = iframe.src; }
+        };
 
         // Home button: back to the local homepage, no proxy needed for it.
         document.getElementById("homeBtn").onclick = function() {
@@ -243,8 +178,11 @@
             if (e.key === "Enter") go();
         });
 
-        // STEP 6: Register the service worker, then boot once it's ready.
-        // Service workers only run in a secure context: https:// or http://localhost.
+        document.getElementById("retryBtn").onclick = function() {
+            hideBlocked();
+            init();
+        };
+
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("/sw.js").then(init);
         } else {

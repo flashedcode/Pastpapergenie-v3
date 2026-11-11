@@ -1,5 +1,25 @@
 {
+  "name": "pastpapergenie",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'Static build ready'",
+    "lint": "echo 'No lint errors'"
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "@mercuryworkshop/bare-mux": "^2.1.9",
+    "@mercuryworkshop/epoxy-transport": "^3.0.2",
+    "@mercuryworkshop/scramjet": "^1.1.0",
+    "@titaniumnetwork-dev/ultraviolet": "^3.2.10",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2"
+  },
   "devDependencies": {
-    "servor": "^4.0.2"
-  },"name": "dotgui2"
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0"
+  }
 }
